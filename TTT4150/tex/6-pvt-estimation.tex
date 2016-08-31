@@ -1,0 +1,66 @@
+%!TEX root = ../TTT4150-Summary.tex
+\section{Position, velocity, and time (PVT) estimation}
+
+\subsection{Position estimation with pseudoranges}
+The pseudorange measurement from satellite $k$ after correction is
+\begin{equation}\label{eq:pseudorange}
+    \rho_c^{(k)} = r^{(k)} + c \cdot \delta t_u + \tilde{\epsilon}_\rho^{(k)}
+\end{equation}
+where $\delta t_u$ is the user clock bias, and $\tilde{\epsilon}_\rho^{(k)}$ is the combined effect of residual errors. The position of the user at the time of measurement is
+\begin{equation}
+    \V{x} = (x, y, z)
+\end{equation}
+and the position of satellite $k$ at signal transmission time is
+\begin{equation}
+    \V{x}^{(k)} = \left( x^{(k)}, y^{(k)}, z^{(k)} \right).
+\end{equation}
+The user-to-satellite range is
+\begin{equation}
+    r^{(k)} = \norm{\V{x}^{(k)} - \V{x}}
+\end{equation}
+and \eqref{eq:pseudorange} can be written as
+\begin{equation}
+    \rho_c^{(k)} = r^{(k)} + b + \tilde{\epsilon}_\rho^{(k)}.
+\end{equation}
+
+The \emph{geometry matrix} is
+\begin{equation}
+    \M{G}
+    =
+    \begin{bmatrix}
+        (-\M{1}^{(1)})\T & 1     \\
+        \vdots          & \vdots \\
+        (-\M{1}^{(K)})\T & 1
+    \end{bmatrix}
+\end{equation}
+where $K$ is the number of satellites in view, and $\M{1}^{(k)}$ is the line of sight unit vector from the initial user position estimate to satellite $k$.
+
+\subsection{Dilution of precision (DOP)}
+DOP quantifies the effect of satellite geometry on the accuracy of positioning. A good geometry gives a low DOP value, and high accuracy. There are several variants, using $\M{H} = \left( \M{G}\T \M{G} \right)^{-1}$:
+\begin{itemize}
+    \item
+        Position dilution of precision
+        \begin{equation}
+            \mathrm{PDOP} = \sqrt{H_{11} + H_{22} + H_{33}}
+        \end{equation}
+    \item
+        Time dilution of precision
+        \begin{equation}
+            \mathrm{TDOP} = \sqrt{H_{44}}
+        \end{equation}
+    \item
+        Geometric dilution of precision
+        \begin{equation}
+            \mathrm{GDOP} = \sqrt{H_{11} + H_{22} + H_{33} + H_{44}}
+        \end{equation}
+    \item
+        Horizontal dilution of precision
+        \begin{equation}
+            \mathrm{HDOP} = \sqrt{H_{11} + H_{22}}
+        \end{equation}
+    \item
+        Vertical dilution of precision
+        \begin{equation}
+            \mathrm{VDOP} = \sqrt{H_{33}}
+        \end{equation}
+\end{itemize}

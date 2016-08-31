@@ -1,0 +1,31 @@
+%!TEX root = ../TTT4150-Summary.tex
+\section{Precise positioning with carrier phase}
+Code measurement accuracy tops out at the meter level. Precise positioning with carrier phase measurements, can achieve centimeter-level accuracy.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Carrier phase and integer ambiguity resolution: A simple model}
+Two antennas receive the same carrier signal. It's off by $N$ full cycles, and a partial cycle. The partial cycle (phase shift) can be measured, but we don't know $N$. This gives integer ambiguity.
+
+If we wait for the satellite to move a bit and measure again, we have two equations in two unknowns, and can solve for $N$. Satellite geometry change is essential for the quality of the estimates.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Precise point positioning (PPP)}
+
+PPP is centimeter-level positioning without a reference station, based on precise estimation of all significant error sources. The necessary orbit data is available in various latencies and accuracies. Near real-time is possible, but you get better accuracy if you wait a while.
+
+The errors we must estimate are:
+\begin{itemize}
+    \item Satellite ephemeris and clock error: You can get these from IGS.
+    \item Ionospheric delay: Eliminate with dual-frequency measurements.
+    \item Tropospheric delay: Must estimate.
+    \item Multipath and receiver noise: At least no reference station multipath error now.
+    \item Phase wind-up correction: Antenna rotation (rover or satellite) will change the carrier phase.
+    \item Satellite antenna offsets: Orbit models give position of satellite mass center, but pseudorange measurements refer to the antenna phase center.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Carrier phase integer ambiguity}
+As mentioned, carrier phase has an integer ambiguity. This integer can be fixed.
+
+\subsubsection{Using code measurements to estimate integers}
+We can use the code measurement to estimate the carrier integer. But it's hard to use the fairly coarse code pseudorange to estimate this, and you need to average codes over a long time horizon to get a good enough estimate. Therefore, it doesn't really work.

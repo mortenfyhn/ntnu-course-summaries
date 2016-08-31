@@ -1,0 +1,19 @@
+\begin{tikzpicture}[auto, node distance=1cm,>=latex']
+	\node [point] (in) {};
+	\node [block, right of=in, node distance=2cm] (acq) {Acquisition};
+	\node [point, right of=acq, node distance=1.5cm] (track) {};
+	\node [block, above of=track, node distance=1cm, align=center] (code) {Code\\tracking};
+	\node [block, below of=track, node distance=1cm, align=center] (carrier) {Carrier\\tracking};
+	\node [block, right of=track, node distance=1.5cm, align=center] (data) {Nav. data\\extraction};
+	\node [block, right of=data, node distance=2cm, align=center] (calc) {Pseudorange\\caluclation};
+	\node [point, right of=calc, node distance=1.5cm] (out) {};
+
+	\draw [->, align=center] (in) -- node{Incoming\\signal} (acq);
+	\draw [->] (acq) |- node {} (code);
+	\draw [->] (acq) |- node {} (carrier);
+	\draw [<->] (code) -- node {} (carrier);
+	\draw [->] (code) -| node {} (data);
+	\draw [->] (carrier) -| node {} (data);
+	\draw [->] (data) -- node {} (calc);
+	\draw [->] (calc) -- node {} (out);
+\end{tikzpicture}

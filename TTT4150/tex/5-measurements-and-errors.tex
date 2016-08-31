@@ -1,0 +1,41 @@
+%!TEX root = ../TTT4150-Summary.tex
+\section{GPS measurements and error sources}
+Two measurements: Code tracking and carrier phase.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Measurement models}
+
+\subsubsection{Code phase measurements}
+The satellite sends a code with a time stamp. The receiver gets the code, and calculates the propagation time by comparing the time stamp to the receiver time when the signal arrives. This propagation time is off by $\delta t$, because the receiver clock is less accurate and out of sync with the satellite clocks. It still calculates a receiver-satellite range with the imprecise propagation time. This range is also imprecise, and is called a \emph{pseudorange}. It consists of the correct range plus a term $\delta t \cdot c$. We must estimate this $\delta t$ to find the correct distance between user and satellite.
+
+The measurement of propagation time is done like this: The satellite sends a `pseudo-random' code, and the receiver generates an identical code. Receiver shifts its code until it aligns with the satellite code. Shift is equal to signal travel time. However, the cycle width is almost a microsecond, and \emph{perfect} alignment is impossible. Alignment within 1--2 percent can be done, but gives meter-range errors.
+
+\subsubsection{Carrier phase measurements}
+The carrier signal frequency for the code is over a GHz (1.57 GHz?). The wavelength is rougly 20 cm, and if we align with 1 \% accuracy, we're at millimeter level. As opposed to the code, carrier cycles are similar to each other. After narrowing down to meter level with code measurements, we must find out which carrier cycle we're on. We can measure the phase difference $\Delta_0$, but we must determine the integer cycle ambiguity $N$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Signal propagation modeling errors}
+
+GPS signals mostly travel at the speed of light, but at roughly \SI{1000}{km} they are refracted by hitting the atmosphere. The direction change doesn't matter much, but the speed change is bad. For L-band radio signals, the ionosphere is dispersive (refractive index depends on signal frequency) and the troposphere is not.
+
+\subsubsection{Ionospheric delay}
+The ionosphere is made of ionized gases and its properties (electron density) change from day to day and year to year and so on. Ionized gas is refractive and dispersive to radio waves. The phase advance and group delay are proportional to electron count along the path, and the path depends on the satellite elevation.
+
+If you have a dual-frequency GPS receiver, you can estimate the errors and remove them.
+
+\subsubsection{Tropospheric delay}
+The troposphere consists of dry gases (mostly $\text{N}_2$ and $\text{O}_2$) and water vapor. Not dispersive like the ionosphere. Propagation speed is lower than in free space, so apparent range is around \SIrange{2.5}{25}{\meter} too long.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Measurement errors}
+First: High precision means low variability. High accuracy means average is near true value.
+
+\subsubsection{Receiver noise}
+All non-signal RF radiation sensed by the antenna, in the same band.
+
+\subsubsection{Multipath}
+Reflections of the signal so that the same signal (from the satellite) reaches the antenna more than once.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Differential GPS (DGPS)}
+Many GPS error sources are almost the same for all receivers in an area. With a receiver of known position, you can estimate the errors and broadcast them to nearby users, who then can use them to remove the errors.

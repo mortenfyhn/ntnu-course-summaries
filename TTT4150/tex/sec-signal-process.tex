@@ -1,0 +1,28 @@
+%!TEX root = ../TTT4150-Summary.tex
+\section{Signal processing}
+Figure \ref{fig:signal-diagram} shows the main components of GNSS receiver signal processing.
+
+\begin{figure}[htbp]
+	\centering
+	\label{fig:signal-diagram}
+	\input{img/signal-diagram.tikz}
+	\caption{Signal processing in a GNSS receiver}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Acquisition}
+
+Each satellite transmits a PRN signal independent from transmitted data. The signal uses more bandwith than the navigation data needs. The receiver correlates the incoming signal with a replica of the PRN code.
+
+All GNSS signals share the same medium, and most use CDMA to share it. With CDMA, each satellite has its own PRN code. These have low crosscorrelation with other PRN codes.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Code and carrier tracking}
+The code delay and carrier phase is tracked for each satellite in view, in separate ``channels'' in the software. The code delay is the misalignment between the incoming signal code and the carrier-generated replica. The carrier phase reflects the relative motion between the satellite and the user. Both are tracked by \emph{tracking loops} (phase-lock and delay-lock loops).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Navigational data extraction}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Pseudorange extraction}

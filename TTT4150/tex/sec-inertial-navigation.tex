@@ -1,0 +1,37 @@
+%!TEX root = ../TTT4150-Summary.tex
+\section{Inertial navigation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Reference frames}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{Notation}
+\begin{itemize}
+	\item $\V{v}^n$---velocity given in frame $n$
+	\item $\M{R}_p^n$---rotation from frame $p$ to $n$
+	\item $\V{\omega}_{ip}^p$---angular rate of frame $p$ w.r.t. $i$, represented in $p$.
+\end{itemize}
+
+\subsubsection{Inertial frames and the ECI frame}
+A frame in which Newton's laws of motion apply, i.e. it does not accelerate. All inertial sensors measure relative to an inertial frame. \emph{ECI} is an example of this, with origin at the Earth center, not rotating with the earth.
+
+\subsubsection{ECEF frame}
+Earth-centered, earth-fixed. Rotates relative to the inertial frame with $\omega_{ie} \approx 7.292 \cdot 10^{-5}$ rad/sec.
+
+\subsubsection{Geographic frame}
+Origin equal to platform origin projected onto the reference ellipsoid. $z$-axis down, normal to ellipsoid surface. $x$-axis north, $y$-axis east. Not inertial.
+
+\subsubsection{Geocentric frame}
+Similar to the geographic frame, but $z$-axis down toward Earth center. Also not inertial.
+
+\subsubsection{Tangent plane}
+North, east, down as used in daily life. Origin at a fixed point on Earth. Coincides with the geographic frame when the system origin coincides with the tangent frame origin.
+
+\subsubsection{Body frame}
+Attached to the vehicle of interest, often origin at center of gravity. $x$-axis forward, $z$-axis down, and $y$-axis completes the right-handed orthogonal coordinate system (i.e. to the right).
+
+\subsubsection{Platform frame}
+Frame centered somewhere on the sensor platform. Usually non-moving wrt. the body frame, so $\M{R}_p^b$ is constant.
+
+\subsubsection{Instrument frame}
+The frame along which an instrument measures. (An IMU measures acceleration along the instrument axes, and rotation rate around the instrument frame axes.)
