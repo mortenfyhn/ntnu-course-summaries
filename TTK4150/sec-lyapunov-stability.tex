@@ -60,7 +60,8 @@ Let $E = \{ x \in \Omega_c | \dot{V}(x) = 0 \}$. Let $M$ be the largest invarian
 \paragraph{Theorem 4.7 (Lyapunov's indirect method)}
 Let $x^* = 0$ for $\dot{x} = f(x)$ where $f : \mathbb{D} \rightarrow \mathbb{R}^n$ satisfies $f \in \mathbb{C}^1$ and $\mathbb{D}$ is a neighborhood of the origin. Let
 \begin{equation}
-	A = \pd{f}{x} (x) \evalat{x = 0}
+	% A = \pd{f}{x} (x) \evalat{x = 0}
+	A = \pd{f}{x} (x) \big\rvert_{x = 0}
 \end{equation}
 and $\lambda_i$ be the eigenvalues of $A$. Then
 \begin{enumerate}
@@ -148,7 +149,8 @@ The origin of $\dot{x} = f(x)$ is ES iff $A$ is Hurwitz, where
 	\begin{bmatrix}
 		\pd{f}{x}
 	\end{bmatrix}
-	\evalat{x=0}
+	% \evalat{x=0}
+	\bigg\rvert_{x=0}
 	.
 \end{equation}
 
