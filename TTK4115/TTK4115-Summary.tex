@@ -1,27 +1,29 @@
 \documentclass[a4paper]{article}
 
-\usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{libertine}
+\usepackage[libertine]{newtxmath}
 \usepackage{amsmath}
 \usepackage{commath}
 \usepackage{mathrsfs}
-\usepackage{enumitem}
+% \usepackage{enumitem}
 \usepackage{bm}
 \usepackage{authblk}
-\usepackage{esdiff}
-\usepackage{microtype}
+% \usepackage{esdiff}
+% \usepackage{microtype}
 
 \newcommand{\M}[1]{\bm{#1}}
 \newcommand{\Mc}[1]{\mathbf{#1}}
 \newcommand{\V}[1]{\mathbf{#1}}
 \newcommand{\transpose}{^{\text{T}}}
 \newcommand{\E}{\text{E}}
-\newcommand{\Var}{\operatorname{Var}}
 \newcommand{\fourier}{\mathcal{F}}
 \newcommand{\lagrange}{\mathscr{L}}
-\newcommand{\pder}[2]{\frac{\partial#1}{\partial#2}}
-\newcommand{\der}[2]{\frac{\text{d}#1}{\text{d}#2}}
-\newcommand{\sub}[1]{_{\textnormal{#1}}}
+\newcommand{\sub}[1]{_{\mathrm{#1}}}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\nul}{nul}
+\DeclareMathOperator{\rank}{rank}
 
 \title{Summary of TTK4115}
 \author{Morten Fyhn Amundsen}
@@ -35,7 +37,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Matrix stuff}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Nullity} $\operatorname{nullity}(\M{A}) = \operatorname{\textup{No. of columns of }} \M{A} - \operatorname{rank}(\M{A})$
+\paragraph{Nullity} $\nul(\M{A}) = \mbox{No. of columns of } \M{A} - \rank(\M{A})$
 \paragraph{Positive definite} A symmetric $n \times n$ real matrix $\M{M}$ is \emph{positive definite} if all its eigenvalues are positive. (Or if $\V{z}\transpose \M{M}\V{z} > 0$ for every non-zero vector $\V{z}$ of $n$ real numbers.) It is positive \emph{semidefinite} if all eigenvalues are positive or zero.
 \paragraph{Singularity} A square matrix is singular if it is not invertible, i.e. if its determinant is $0$.
 \paragraph{Matrix exponential (diagonal)}
@@ -196,6 +198,6 @@ And the time update equations are:
 $$\V{\hat{x}}_{k+1}^- = \V{f}(\V{\hat{x}}_k, \V{u}_k)$$
 $$\M{P}_{k+1}^- = \M{A}_k\M{P}_k\M{A}_k\transpose + \M{Q}_k$$
 Where:
-$$\M{A}_k = \pder{\V{f}}{\V{x}_k}\bigg|_{\V{x}_k = \V{\hat{x}}_k} \qquad\text{and}\qquad \M{C}_k = \der{\V{h}}{\V{x}_k}\bigg|_{\V{x}_k = \V{\hat{x}}_k^-}$$
+$$\M{A}_k = \pd{\V{f}}{\V{x}_k}\bigg|_{\V{x}_k = \V{\hat{x}}_k} \qquad\text{and}\qquad \M{C}_k = \od{\V{h}}{\V{x}_k}\bigg|_{\V{x}_k = \V{\hat{x}}_k^-}$$
 
 \end{document}
