@@ -1,0 +1,201 @@
+\documentclass[a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{commath}
+\usepackage{mathrsfs}
+\usepackage{enumitem}
+\usepackage{bm}
+\usepackage{authblk}
+\usepackage{esdiff}
+\usepackage{microtype}
+
+\newcommand{\M}[1]{\bm{#1}}
+\newcommand{\Mc}[1]{\mathbf{#1}}
+\newcommand{\V}[1]{\mathbf{#1}}
+\newcommand{\transpose}{^{\text{T}}}
+\newcommand{\E}{\text{E}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\fourier}{\mathcal{F}}
+\newcommand{\lagrange}{\mathscr{L}}
+\newcommand{\pder}[2]{\frac{\partial#1}{\partial#2}}
+\newcommand{\der}[2]{\frac{\text{d}#1}{\text{d}#2}}
+\newcommand{\sub}[1]{_{\textnormal{#1}}}
+
+\title{Summary of TTK4115}
+\author{Morten Fyhn Amundsen}
+\affil{NTNU}
+
+\begin{document}
+\maketitle
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Matrix stuff}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Nullity} $\operatorname{nullity}(\M{A}) = \operatorname{\textup{No. of columns of }} \M{A} - \operatorname{rank}(\M{A})$
+\paragraph{Positive definite} A symmetric $n \times n$ real matrix $\M{M}$ is \emph{positive definite} if all its eigenvalues are positive. (Or if $\V{z}\transpose \M{M}\V{z} > 0$ for every non-zero vector $\V{z}$ of $n$ real numbers.) It is positive \emph{semidefinite} if all eigenvalues are positive or zero.
+\paragraph{Singularity} A square matrix is singular if it is not invertible, i.e. if its determinant is $0$.
+\paragraph{Matrix exponential (diagonal)}
+$$\M{A} =
+\begin{bmatrix}
+a_1		& \cdots	& 0			\\
+\vdots 	& \ddots	& \vdots	\\
+0		& \cdots	& a_n		\\
+\end{bmatrix}
+\quad \implies \quad
+e^{\M{A}t} =
+\begin{bmatrix}
+e^{a_1t}	& \cdots	& 0			\\
+\vdots 		& \ddots	& \vdots	\\
+0			& \cdots	& e^{a_nt}	\\
+\end{bmatrix}$$
+\paragraph{Matrix exponential (Cayley-Hamilton Method)}
+$$e^{\M{A}t} = \sum_{k=0}^{n-1} \alpha_k \M{A}^k
+\quad \text {with } \alpha_0 \cdots \alpha_{n-1} \text{ determined by} \quad
+e^{\lambda_i t} = \sum_{k=0}^{n-1} \alpha_k \lambda_i^k$$
+\paragraph{Matrix exponential (Laplace method)}
+$$e^{\M{A}t} = \lagrange \left\{ (s\Mc{I}-\M{A})^{-1} \right\}$$
+\paragraph{Matrix exponential (Jordan form)}
+$$e^{\M{A}t} = \M{Q} e^{\bar{\M{A}}t} \M{Q}^{-1} \quad \text{where} \quad \bar{\M{A}} = \M{Q}^{-1}\M{AQ}$$
+\paragraph{Controllability matrix} $\mathcal{C} = \begin{bmatrix}\M{B} & \M{AB} & \M{A}^{2}\M{B} & \hdots & \M{A}^{n-1}\M{B}\end{bmatrix}$
+\paragraph{Observability matrix} $\mathcal{O} = \begin{bmatrix}\M{C} & \M{CA} & \M{CA}^2 & \hdots & \M{CA}^{n-1}\end{bmatrix}^{\text{T}}$
+\paragraph{Minimal realisation} Given a transfer function; a state-space model that is controllable and observable, and has the same input-output behaviour as the function, is minimal.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Eigen stuff}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Eigenvalues} Values of $\lambda$ such that $\Delta(\lambda) = |\lambda \M{I} - \M{A}| = 0$.
+\paragraph{Eigenvectors} Vectors $\V{v}$ such that $(\M{A} - \lambda \Mc{I})\V{v} = 0$.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Stability}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Asymptotic stability} Occurs if all poles have strictly negative real parts.
+\paragraph{Instability} Occurs if one or more poles have positive real parts.
+\paragraph{Marginal stability} Occurs when the real part of every pole is non-positive, at least one pole has zero real value, and there are no repeated poles on the imaginary axis.
+\paragraph{BIBO stability} If bounded input $\rightarrow$ bounded output. Defined for the zero-state response (initially relaxed system). See Section \ref{sec:bibo}.
+\paragraph{Lyapunov stability} If every finite initial state gives a finite response. I.e. the zero-input response.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{BIBO Stability}\label{sec:bibo}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{BIBO Stability for Continuous Systems}
+A continuous system is BIBO stable \emph{iff}:
+\begin{itemize}
+\item	(SISO) $g(t)$ is absolutely integrable in $[0, \infty)$ \quad or \quad $\int_{0}^{\infty} |g(t)| \dif t \leq M < \infty $ for some constant $M$.
+\item	(SISO/MIMO) Every pole of every transfer function in $\M{\hat{G}}(s)$ or $\hat{g}(s)$ has a negative real part.
+\end{itemize}
+\subsection{BIBO Stability for Discrete Systems}
+A discrete system is BIBO stable iff:
+\begin{itemize}
+\item	Every pole of every transfer function in $\M{\hat{G}}(s)$ or $\hat{g}(s)$ has magnitude less than $1$.
+\end{itemize}
+\subsection{Lyapunov Stability for Linear Systems}
+An LTI system $\V{\dot{x}} = \M{A}\V{x}$ is stable if there exists a \emph{symmetric} positive definite matrix $\M{P}$ that satisfies the Lyapunov Equation
+$$\M{A} \transpose \M{P} + \M{MP} = - \M{N}$$
+Where $\M{N}$ is an arbitrary positive definite matrix.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Discretisation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$$\M{A}_d = e^{\M{A}T},\qquad \M{B}_d = \int_0^T e^{\M{A}\tau} \dif \tau \M{B}, \qquad \M{C}_d = \M{C}, \qquad \M{D}_d = \M{D}$$
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Similarity transform}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+A linear change of coordinates where the original object is expressed with respect to a different basis. The representation of $\V{x}$ with respect to the basis $\{ \V{q}_1, \dots, \V{q}_n \}$ is $\V{\bar{x}}$ and with $\M{Q} = [ \V{q}_1, \dots, \V{q}_n ]$, the similarity transform is
+$$\V{x} = \M{Q}\V{\bar{x}}.$$
+The system originally expressed as
+$$\V{\dot{x}} = \M{A}\V{x} + \M{B}\V{u}$$
+$$\V{y} = \M{C}\V{x} + \M{D}\V{u}$$
+is transformed to
+$$\V{\dot{\bar{x}}} = \M{\bar{A}}\V{\bar{x}} + \M{\bar{B}}\V{u}$$
+$$\V{y} = \M{\bar{C}}\V{\bar{x}} + \M{\bar{D}}\V{u}$$
+where
+$$\M{\bar{A}} = \M{Q}^{-1}\M{AQ},\qquad \M{\bar{B}} = \M{Q}^{-1}\M{B},\qquad \M{\bar{C}} = \M{CQ},\quad \M{\bar{D}} = \M{D}$$
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Jordan canonical form}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+General strategy:
+\begin{enumerate}
+\item Find all eigenvectors corresponding to an eigenvalue of $\M{A}$.
+\item The number of L.I. eigenvectors is the number of Jordan blocks.
+\item For each eigenvector $\V{q}$, solve $(\lambda \Mc{I} - \M{A}) \V{v} = \V{q}$ for the vector $\V{v}$.
+\end{enumerate}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Statistics}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Expected value} $\E[X] = \int_{-\infty}^{\infty} x f(x) \dif t$
+\paragraph{Variance} $\Var(X) = \E[(X-\E[X])^{2}] = \E[X^{2}] - (\E[X])^{2}$
+\paragraph{Autocorrelation} $R_X(t_1, t_2) = \E[X(t_1)X(t_2)]$
+\paragraph{Wide-sense stationary process} $X(t)$ is WSS if its mean and autocorrelation functions are time invariant: \quad  $\E[X(t)] = \nu$ \quad and \quad $R_X(t_1, t_2) = f(t_2-t_1)$.
+\paragraph{Spectral density function} $S_X(\jmath\:\omega) = \fourier\left\{ R_X(\tau) \right\}$
+\paragraph{Gauss--Markov process} A stationary Gaussian process $X(t)$ that has an exponential autocorrelation is called a \emph{Gauss--Markov} process.
+$$R_X(\tau) = \sigma^2 e^{-\beta |\tau|}$$ $$S_X(\jmath\:\omega) = \frac{2\sigma^2\beta}{\beta^2 + \omega^2} \quad\text{or}\quad S_X(s) = \frac{2\sigma^2\beta}{\beta^2 - s^2}$$
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Linear-quadratic regulator}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+A system is given as $$\V{\dot{x}} = \M{A}\V{x} + \M{B}\V{u}$$
+with a state feedback $\V{u} = - \M{K}\V{x}$ chosen to minimise the cost function
+$$J = \int_0^\infty \V{x}\transpose \M{Q} \V{x} + \V{u}\transpose \M{R} \V{u} \dif t$$
+where $\M{Q}$ is symmetric and positive semidefinite, $\M{R}$ is symmetric and positive definite, and $\M{K} = \M{R}^{-1}\M{B}\transpose\M{P}$. The matrix $\M{P}$ is found by solving $$\M{A}\transpose \M{P} + \M{PA} - \M{PBR}^{-1}\M{B}\transpose \M{P} + \M{Q} = \M{0}$$
+
+The relative values of the elements of $Q$ and $R$ enforce tradeoffs between the magnitude of the control action and the speed of the response. The equilibrium can be shifted from $\V{0}$ to $\V{x}\sub{eq}$ by instead using $\V{u} = \M{P}\V{x}\sub{eq} - \M{K}\V{x}$.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Kalman filter}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The system is given as:
+$$\V{x}_{k+1} = \M{A}\V{x}_k + \M{B}\V{u}_k + \V{w}_k$$
+$$\V{z}_k = \M{H}_k\V{x}_k + \V{v}_k$$
+The Kalman measurement update equations are:
+$$\M{K}_k = \M{P}_k^- \M{H}_k\transpose (\M{H}_k\M{P}_k^- \M{H}_k\transpose + \M{R}_k)^{-1}$$
+$$\V{\hat{x}}_k = \V{\hat{x}}_k^- + \M{K}_k(\V{z}_k - \M{H}_k \V{\hat{x}}_k^-)$$
+$$\M{P}_k = (\Mc{I} - \M{K}_k \M{H}_k) \M{P}_k^- (\Mc{I}-\M{K}_k\M{H}_k)\transpose + \M{K}_k\M{R}_k\M{K}_k\transpose$$
+And the time update equations are:
+$$\V{\hat{x}}_{k+1}^- = \M{A}\V{\hat{x}}_k + \M{B}\V{u}_k$$
+$$\M{P}_{k+1}^- = \M{AP}_k\M{A}\transpose + \M{Q}_k$$
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Extended Kalman filter}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The system is given as:
+$$\V{x}_{k+1} = \V{f}(\V{x}_k, \V{u}_k) + \V{w}_k$$
+$$\V{y}_k = \V{h}(\V{x}_k) + \V{v}_k$$
+The Kalman measurement update equations are:
+$$\M{K}_k = \M{P}_k^- \M{C}_k\transpose (\M{C}_k \M{P}_k^- \M{C}_k\transpose + \M{R})^{-1}$$
+$$\V{\hat{x}}_k = \V{\hat{x}}_k^- + \M{K}_k \left(\V{y}_k - \V{h}(\V{\hat{x}}_k^-)\right)$$
+$$\M{P}_k = (\Mc{I} - \M{K}_k\M{C}_k) \M{P}_k^- (\Mc{I} - \M{K}_k\M{C}_k)\transpose + \M{K}_k\M{R}_k\M{K}_k\transpose$$
+And the time update equations are:
+$$\V{\hat{x}}_{k+1}^- = \V{f}(\V{\hat{x}}_k, \V{u}_k)$$
+$$\M{P}_{k+1}^- = \M{A}_k\M{P}_k\M{A}_k\transpose + \M{Q}_k$$
+Where:
+$$\M{A}_k = \pder{\V{f}}{\V{x}_k}\bigg|_{\V{x}_k = \V{\hat{x}}_k} \qquad\text{and}\qquad \M{C}_k = \der{\V{h}}{\V{x}_k}\bigg|_{\V{x}_k = \V{\hat{x}}_k^-}$$
+
+\end{document}
