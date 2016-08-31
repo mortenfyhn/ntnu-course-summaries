@@ -1,0 +1,39 @@
+%!TEX root = TTK4150-Summary.tex
+\section{Stability of perturbed systems}
+We consider perturbed systems on the form
+\begin{equation}
+	\dot{x} = f(t,x) + g(t,x)
+\end{equation}
+with \emph{nominal} systems
+\begin{equation}
+	\dot{x} = f(t,x)
+	.
+\end{equation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Vanishing perturbation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Lemma 9.1}
+\begin{itemize}
+	\item The origin is an ES equilibrium of the nominal system.
+	\item $V(t,x)$ is an LF of the nominal system, and satisfies
+		\begin{equation}
+			c_1 \norm{x}^2 \leq V(t,x) \leq c_2 \norm{x}^2
+		\end{equation}
+		and
+		\begin{equation}
+			\norm{\pd{V}{x}} \leq c_4 \norm{x}
+			.
+		\end{equation}
+	\item The perturbation $g(t,x)$ satisfies
+		\begin{equation}
+			\norm{g(t,x)} \leq \gamma \norm{x}, \quad \gamma < \frac{c_3}{c_4}
+			.
+		\end{equation}
+\end{itemize}
+Then $x^* = 0$ of the perturbed system is ES. If the assumptions hold globally, $x = 0$ is GES.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Nonvanishing perturbation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

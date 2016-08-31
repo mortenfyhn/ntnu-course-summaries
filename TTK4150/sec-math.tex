@@ -1,0 +1,103 @@
+%!TEX root = TTK4150-Summary.tex
+\section{Math}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Metric norms}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{General $p$-norm}
+\begin{equation}
+	\norm{x}_p
+	=
+	\left(
+		\sum_{i=1}^{n} \abs{x_i}^p
+	\right)
+	^{1/p}
+\end{equation}
+
+\paragraph{Taxicab norm ($p=1$)}
+\begin{equation}
+	\norm{x}_1
+	=
+	\sum_{i=1}^{n} \abs{x_i}
+\end{equation}
+
+\paragraph{Euclidean norm ($p=2$)}
+\begin{equation}
+	\norm{x}_2
+	=
+	\sqrt{x_1^2 + \cdots + x_n^2}
+\end{equation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection[\texorpdfstring{Boundedness and $\mathcal{L}_p$-norms}
+	{Boundedness and Lp-norms}]
+	{Boundedness and $\mathcal{L}_p$-norms}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{$\mathcal{L}_p$-norm}
+\begin{equation}
+	\norm{f}_p
+	=
+	\left(
+		\int_a^b \abs{f(\tau)}^p \dif \tau
+	\right)^{1/p}
+\end{equation}
+
+\paragraph{$\mathcal{L}_\infty$-norm}
+\begin{equation}
+	\norm{f}_\infty
+	=
+	\sup_{a \leq t \leq b} \abs{f(t)}
+\end{equation}
+
+\paragraph{Boundedness}
+\begin{equation}
+	f \in \mathcal{L}_p \Leftrightarrow \norm{f}_p < \infty
+\end{equation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Properties of norms}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Hölder's inequality}
+\begin{equation}
+	\norm{fg}_1 \leq \norm{f}_p \norm{g}_q
+\end{equation}
+with $\frac{1}{p} + \frac{1}{q} = 1$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Matrix properties}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Singular} A matrix is \emph{singular} iff its determinant is zero.
+
+\paragraph{Skew-symmetry} A matrix $A$ is \emph{skew-symmetric} iff
+\begin{equation}
+	-A = A\T
+	.
+\end{equation}
+
+\paragraph{Jacobian} The \emph{Jacobian} matrix is defined by
+\begin{equation}
+	J
+	=
+	\od{f}{x}
+	=
+	\begin{bmatrix}
+		\pd{f_1}{x_1} & \cdots & \pd{f_1}{x_n} \\
+		\vdots        & \ddots & \vdots        \\
+		\pd{f_m}{x_1} & \cdots & \pd{f_m}{x_n}
+	\end{bmatrix}
+	.
+\end{equation}
+
+\paragraph{Hurwitz}
+A matrix $A$ is \emph{Hurwitz} if all eigenvalues of $A$ satisfy $\Re \lambda_i < 0$.
+
+\paragraph{Positive definite} A matrix being \emph{positive definite} is equivalent to
+\begin{itemize}
+	\item all its eigenvalues being positive,
+	\item all its leading principal minors being positive.
+\end{itemize}
+In addition, we have
+\begin{equation}
+	\lambda\sub{min}(H) x\T x \leq x\T H x \leq \lambda\sub{max}(H) x\T x
+\end{equation}
+for a positive definite $x\T H x$.

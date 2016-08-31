@@ -1,0 +1,51 @@
+%!TEX root = TTK4150-Summary.tex
+\section{Seconds-order systems}
+\begin{equation}\label{eq:autonomous}
+	\dot{x} = f(x), \quad x \in \mathbb{R}^2
+\end{equation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Behaviour near equilibria}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Linearise and find eigenvalues at each equilibrium:
+\begin{itemize}
+	\item Real $\lambda$
+	\begin{itemize}
+		\item $\lambda_1 < \lambda_2 < 0 \implies$ Stable node.
+		\item $0 < \lambda_1 < \lambda_2 \implies$ Unstable node.
+		\item $\lambda_1 < 0 < \lambda_2 \implies$ Saddle point.
+	\end{itemize}
+	\item Complex $\lambda_{1,2} = \alpha \pm \beta \imath$
+	\begin{itemize}
+		\item $\alpha = 0 \implies$ Center.
+		\item $\alpha < 0 \implies$ Stable focus.
+		\item $\alpha > 0 \implies$ Unstable focus.
+	\end{itemize}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Periodic orbits}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Lemma 2.1 (Poincaré-Bendixson criterion)}
+\begin{sloppypar}
+	Consider \eqref{eq:autonomous}. Let $M$ be a bounded, closed subset of the plane such that
+\end{sloppypar}
+\begin{itemize}
+	\item $M$ contains no equilibria, or \emph{one} equilibrium for which the eigenvalues of the Jacobian has positive real parts,
+	\item All trajectories in $M$ stay in $M$.
+\end{itemize}
+Then, $M$ contains a periodic orbit.
+
+\paragraph{Lemma 2.2 (Bendixson (negative) criterion)}
+If
+\begin{equation}
+	\pd{f_1}{x_1} + \pd{f_2}{x_2}
+\end{equation}
+is not zero and does not change sign on a simply connected region $\mathbb{D}$, then \eqref{eq:autonomous} has no periodic orbits in $\mathbb{D}$.
+
+\paragraph{Corollary 2.1 (The index method)}
+\begin{itemize}
+	\item Nodes, foci, and centers have index 1.
+	\item Saddle points have index -1.
+\end{itemize}
+The sum of indices of all equilibria within a periodic orbit is always 1.

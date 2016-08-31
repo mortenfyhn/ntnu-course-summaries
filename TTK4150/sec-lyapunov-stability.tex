@@ -1,0 +1,192 @@
+%!TEX root = TTK4150-Summary.tex
+\section{Lyapunov stability}
+
+\paragraph{Lyapunov function (LF)}
+$V(x)$ is an LF iff
+\begin{itemize}
+	\item $V \in C^1$
+	\item $V(0) = 0$ \\
+	      $V(x) > 0 \quad \forall \quad x \in \mathbb{D} \backslash \{0\}$
+	\item $\dot{V}(0) = 0$ \\
+	      $\dot{V}(x) \leq 0 \quad \forall \quad x \in \mathbb{D} \backslash \{0\}$
+\end{itemize}
+
+\paragraph{Strict Lyapunov function (SLF)}
+$V(x)$ is an SLF iff it is an LF and
+\begin{itemize}
+	\item $\dot{V}(x) < 0 \quad \forall \quad x \in \mathbb{D} \backslash \{0\}$
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Autonomous systems}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Theorem 4.1 (Direct Lyapunov method)}
+\begin{itemize}
+	\item If $\exists$ an LF for the origin, then the origin is stable.
+	\item If $\exists$ an SLF for the origin, then the origin is asymptotically stable.
+\end{itemize}
+
+\paragraph{Theorem 4.2 (GAS)}
+If $\exists$ an SLF $V$ for the origin and $V$ is radially unbounded, then the origin is globally asymptotically stable.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Invariance principle}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Invariant set} A set $M$ is an \emph{invariant set} w.r.t. $\dot{x} = f(x)$ if
+\begin{equation}
+	x(0) \in M \implies x(t) \in M \quad \forall t \in \mathbb{R}.
+\end{equation}
+(Any solution in $M$ stays in $M$ for all future and past.)
+
+\paragraph{Theorem 4.4 (LaSalle's theorem)}
+If $\exists \: V : \mathbb{D} \to \mathbb{R}$ such that
+\begin{itemize}
+	\item $V \in C^1$,
+	\item $\exists \: c > 0$ such that $\Omega_c = \{x \in \mathbb{R}^n | V(x) \leq c \} \subseteq \mathbb{D}$ is bounded,
+	\item $\dot{V}(x) \leq 0 \quad \forall \quad x \in \Omega_c$.
+\end{itemize}
+Let $E = \{ x \in \Omega_c | \dot{V}(x) = 0 \}$. Let $M$ be the largest invariant set in $E$. Then
+\begin{equation}
+	x(0) \in \Omega_c \implies x(t) \xrightarrow{t \to \infty} M.
+\end{equation}
+
+\paragraph{Corollary 4.1} Let $x^* = 0$ for $\dot{x} = f(x)$. If for an LF $V(x)$ we have $\dot{V}(x) \leq 0$ on $D$: Let $S = \{ x \in D | \dot{V}(x) = 0 \}$ and only $x(t) \equiv 0$ can stay in $S$, then $x = 0$ AS.
+
+\paragraph{Corollary 4.2} If corollary 4.1 holds with $D = \mathbb{R}^n$, then $x = 0$ GAS.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Linear systems and linearisation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Theorem 4.7 (Lyapunov's indirect method)}
+Let $x^* = 0$ for $\dot{x} = f(x)$ where $f : \mathbb{D} \rightarrow \mathbb{R}^n$ satisfies $f \in \mathbb{C}^1$ and $\mathbb{D}$ is a neighborhood of the origin. Let
+\begin{equation}
+	A = \pd{f}{x} (x) \evalat{x = 0}
+\end{equation}
+and $\lambda_i$ be the eigenvalues of $A$. Then
+\begin{enumerate}
+	\item $\Re \lambda_i < 0 \mbox{ for all } \lambda_i \implies x = 0$ AS.
+	\item $\Re \lambda_i > 0 \mbox{ for any } \lambda_i \implies x = 0$ unstable.
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Comparison functions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Class $\mathcal{K}$ function}
+A continuous function $\alpha : [0,a) \to [0, \infty)$ belongs to class $\mathcal{K}$ iff
+\begin{itemize}
+	\item it is stricly increasing,
+	\item $\alpha(0) = 0$.
+\end{itemize}
+
+\paragraph{Class $\mathcal{K}_\infty$ function}
+A continuous function $\alpha : [0,a) \to [0, \infty)$ belongs to class $\mathcal{K}_\infty$ iff
+\begin{itemize}
+	\item it is of class $\mathcal{K}$,
+	\item $a = \infty$,
+	\item $\alpha(r) \xrightarrow{r \to \infty} \infty$.
+\end{itemize}
+
+\paragraph{Class $\mathcal{KL}$ function}
+A continunous function $\beta : [0,a) \times [0,\infty) \to [0,\infty)$ belongs to class $\mathcal{KL}$ if for each fixed $s$
+\begin{itemize}
+	\item $\beta(r,s)$ is a class $\mathcal{K}$ function w.r.t. $r$,
+\end{itemize}
+and for each fixed $r$
+\begin{itemize}
+	\item $\beta(r,s)$ is decreasing w.r.t. $s$,
+	\item $\beta(r,s) \xrightarrow{s \to \infty} 0$.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Nonautonomous systems}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}\label{eq:nonautonomous}
+	\dot{x} = f(t,x), \quad f : [0,\infty) \times \mathbb{D} \to \mathbb{R}^n
+\end{equation}
+
+\paragraph{Decrescentness}
+$V(t,x)$ is \emph{decrescent} iff
+\begin{equation}
+	\begin{rcases}
+		V(t,0) =    0      \\
+		V(t,x) \leq W_2(x)
+	\end{rcases}
+	\forall \: t \geq 0
+	\mbox{, for some pos. def. }
+	W_2(x).
+\end{equation}
+
+\paragraph{Theorem 4.8--4.9}
+Let $V : [0,\infty) \times \mathbb{D} \to \mathbb{R}$ and $V \in C^1$ for \eqref{eq:nonautonomous}. Then $x^* = 0$ is
+\begin{center}
+	\begin{tabular}{lllll}
+		& S & US & UAS & GUAS \\
+		\hline
+		$V$ & PD & PD, decr. & PD, decr. & PD, decr., RU \\
+		$\dot{V}$ & NSD & NSD & ND & ND \\
+		$\forall x \in$ & $\mathbb{D}$ & $\mathbb{D}$ & $\mathbb{D}$ & $\mathbb{R}^n$
+	\end{tabular}
+\end{center}
+(PD = positive definite, decr. = decrescent, RU = radially unbounded, NSD = negative semidefinite, ND = negative definite.)
+
+\paragraph{Theorem 4.10 (exponential stability)}
+If $\exists \: a, k_1, k_2, k_3 > 0$ such that
+\begin{itemize}
+	\item $V \in C^1$
+	\item $k_1 \norm{x}^a \leq V(x) \leq k_2 \norm{x}^a \quad \forall \: x \in \mathbb{D}$
+	\item $\dot{V}(x) \leq - k_3 \norm{x}^a \quad \forall \: x \in \mathbb{D}$
+\end{itemize}
+then $x = 0$ ES. If $\mathbb{D} = \mathbb{R}^n$, $x = 0$ is GES.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Converse theorems}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Corollary 4.3}
+The origin of $\dot{x} = f(x)$ is ES iff $A$ is Hurwitz, where
+\begin{equation}
+	A =
+	\begin{bmatrix}
+		\pd{f}{x}
+	\end{bmatrix}
+	\evalat{x=0}
+	.
+\end{equation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Input-to-state stability}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}\label{eq:iss-system}
+	\Sigma: \quad \dot{x} = f(t,x,u)
+\end{equation}
+
+\paragraph{Theorem 4.19}
+Let $V : [0,\infty) \times \mathbb{R}^n \to \mathbb{R}$ be cont. diff.able such that
+\begin{equation}
+	\alpha_1 \left( ||x|| \right) \leq V(t,x) \leq \alpha_2 \left( ||x|| \right)
+\end{equation}
+\begin{equation}
+	\dot{V} \leq -W_3(x) \quad \forall \quad ||x|| \geq \rho \left( ||u|| \right) > 0
+\end{equation}
+$\forall (t,x,u) \in [0,\infty) \times R^n \times R^m$, where
+\begin{itemize}
+	\item $\alpha_1, \alpha_2 \in \mathcal{K}_\infty$,
+	\item $\rho \in \mathcal{K}$, and
+	\item $W_3(x)$ is a cont. pos. def. function on $\mathbb{R}^n$.
+\end{itemize}
+Then, the system is ISS with $\gamma=\alpha_1^{-1} \circ \alpha_2 \circ \rho$.
+
+\paragraph{ISS vs. 0-GUAS}
+\begin{gather}
+	\Sigma \mbox{ ISS} \implies \Sigma \mbox{ 0-GUAS} \\
+	\neg (\Sigma \mbox{ 0-GUAS}) \implies \neg (\Sigma \mbox{ ISS})
+\end{gather}
+
+\paragraph{Lemma 4.6 (ISS vs. 0-GES)}
+For \eqref{eq:iss-system} with $f \in C^1$ and $f$ globally Lipschitz in $(x,u)$, then
+\begin{equation}
+	\Sigma \mbox{ 0-GES} \implies \Sigma \mbox{ ISS}
+	.
+\end{equation}
+
+\paragraph{Lemma 4.7}
+The cascade of a GUAS and an ISS system is ISS. (Output of GUAS is the input of ISS.)

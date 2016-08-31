@@ -1,0 +1,48 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[hidelinks]{hyperref}
+\usepackage{commath}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\usepackage{libertine}
+\usepackage{mortenmath}
+\usepackage{graphicx}
+
+% Make ligatures and stuff copiable from pdf:
+\input{glyphtounicode}
+\pdfgentounicode=1
+
+\title{Summary of\\TTK4150 Nonlinear Control Systems}
+\author{Morten Fyhn Amundsen \& Erik Liland}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\paragraph{Todo}
+\begin{itemize}
+	\item Estimate of $R_A$
+	\item K/KL-based stability (p28 slide6)
+	\item L/L-infinity stability
+	\item Def. 5.1
+	\item Theorem 10.4
+	\item Nonvanishing perturbation.
+	\item Theorem 6.3
+\end{itemize}
+
+\input{sec-math}                              % Not in Khalil
+\input{sec-second-order-systems}              % Chapter 2
+\input{sec-lyapunov-stability}                % Chapter 4
+\input{sec-passivity}                         % Chapter 6
+\input{sec-stability-of-perturbed-systems}    % Chapter 9
+\input{sec-perturbation-theory-and-averaging} % Chapter 10
+\input{sec-feedback-linearization}            % Chapter 13
+% \input{sec-feedback-lin}                      % Also chapter 13
+\input{sec-nonlinear-design-tools}            % Chapter 14
+
+\end{document}
