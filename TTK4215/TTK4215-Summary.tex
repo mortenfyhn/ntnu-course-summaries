@@ -1,0 +1,44 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{mortenmath}
+\usepackage{amssymb}
+\usepackage{commath}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{libertine}
+\usepackage[hidelinks]{hyperref}
+
+% Make ligatures and stuff copiable from pdf:
+\input{glyphtounicode}
+\pdfgentounicode=1
+
+\title{Summary of TTK4215:\\System Identification and Adaptive Control}
+\author{Morten Fyhn Amundsen \& Erik Liland}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Todo}
+\begin{itemize}
+	\item Canoncal forms
+	\item Unbounded input (necessary shit for proofs or whatever)
+	\item PE (p177)
+	\item APPC (brief how-to)
+	\item MRAC (brief how-to)
+	\item Richness of input and number of parameters.
+\end{itemize}
+
+\input{sec-preliminaries}
+\input{sec-parametric}
+\input{sec-estimators}
+\input{sec-mrac}
+\input{sec-appc}
+\input{sec-robustness}
+\input{sec-extremum}
+
+\end{document}

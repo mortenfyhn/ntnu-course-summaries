@@ -1,0 +1,69 @@
+%!TEX root = TTK4215-Summary.tex
+\section{Parameter estimation}
+
+\subsection{SPR Lyapunov method}
+Based on choosing an adaptive law so that a \emph{Lyapunov-like} function guarantees $\tilde{\theta} \rightarrow 0$. The parametric model $z = W(s) \theta^{*\T} \psi$ is rewritten $z = W(s) L(s) \theta^{*\T} \phi$, with $L(s)$ a proper stable t.f., and $W(s)L(s)$ a proper SPR t.f.
+
+\begin{gather}
+	z = W(s) L(s) \theta^{*\T} \phi \\
+	\hat{z} = W(s)L(s) \theta\T \phi \\
+	\epsilon = z - \hat{z} - W(s) L(s) \epsilon n_s^2 \\
+	\dot{\theta} = \Gamma \epsilon \phi
+\end{gather}
+
+\subsection{Gradient method}
+\begin{gather}
+	z = \theta^{*\T} \phi \\
+	\hat{z} = \theta\T \phi \\
+	\epsilon = \frac{z - \hat{z}}{m^2}
+\end{gather}
+
+\subsubsection{Instantaneous cost}
+\begin{gather}
+	\dot{\theta} = \Gamma \epsilon \phi
+\end{gather}
+
+\subsubsection{Integral cost}
+\begin{gather}
+	\dot{\theta} = - \Gamma (R \theta + Q) \\
+	\dot{R} = - \beta R + \frac{\phi \phi\T}{m^2} \\
+	\dot{Q} = - \beta Q - \frac{z \phi}{m^2}
+\end{gather}
+
+\subsection{With projection}
+\begin{gather}
+	\dot{\theta} =
+	\begin{cases}
+		\Gamma \epsilon \phi & \mbox{if } \theta \in \mathcal{S}^0 \\
+		\Gamma \epsilon \phi - \Gamma \frac{\nabla g \nabla g\T}{\nabla g\T \Gamma \nabla g} \Gamma \epsilon \phi & \mbox{otherwise}
+	\end{cases}
+\end{gather}
+
+\subsection{Least squares}
+\begin{gather}
+	z = \theta^{*\T} \phi \\
+	\hat{z} = \theta\T \phi \\
+	\epsilon = \frac{z - \hat{z}}{m^2}
+\end{gather}
+
+\subsubsection{Pure least squares}
+\begin{gather}
+	\dot{\theta} = P \epsilon \phi \\
+	\dot{P} = - P \frac{\phi \phi\T}{m^2} P
+\end{gather}
+
+\subsubsection{With covariance resetting}
+\begin{gather}
+	\dot{\theta} = P \epsilon \phi \\
+	\dot{P} = - P \frac{\phi \phi\T}{m^2} P, \quad P(t_r^+) = P_0 = \rho_0 I
+\end{gather}
+
+\subsubsection{With forgetting}
+\begin{gather}
+	\dot{\theta} = P \epsilon \phi \\
+	\dot{P} =
+	\begin{cases}
+		\beta P - P \frac{\phi \phi\T}{m^2} P & \mbox{if } ||P(t)|| \leq R_0 \\
+		0                                     & \mbox{otherwise}
+	\end{cases}
+\end{gather}
