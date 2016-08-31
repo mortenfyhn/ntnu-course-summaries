@@ -1,0 +1,66 @@
+\documentclass[a4paper,twocolumn]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{libertine}
+\usepackage[libertine]{newtxmath}
+\usepackage[hidelinks]{hyperref}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{mortenmath}
+\usepackage{enumitem}
+\usepackage{tocloft}
+\usepackage[top=.5in, bottom=1in, left=.5in, right=.5in]{geometry}
+\usepackage{microtype}
+\usepackage{siunitx}
+\usepackage{commath}
+
+\setlist{noitemsep}
+\setlength{\columnsep}{.5in}
+\setlength{\cftparskip}{0pt}
+\setlength{\cftbeforesecskip}{0pt}
+
+\setcounter{tocdepth}{2}
+
+\input{glyphtounicode}
+\pdfgentounicode=1
+
+\DeclareMathOperator{\atan}{atan}
+\newcommand*{\euler}{\mathrm{e}}
+\newcommand*{\laplace}[1]{\mathcal{L} \left\{ #1 \right\}}
+
+% Tikz options
+\usetikzlibrary{positioning, shapes, arrows}
+\tikzset{font=\scriptsize}
+\tikzstyle{point}  = [coordinate]
+\tikzstyle{block}  = [draw, rectangle] %, minimum height=1cm, minimum width=1.5cm]
+\tikzstyle{sum}    = [draw, circle]
+
+\title{Summary of\\TTT4150 Navigation Systems}
+\author{Morten Fyhn Amundsen}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+%%%%% TODO
+% `Refactor' coordinate frame section
+% Update all sections with book titles and numbers
+%%%%%
+
+\input{tex/1-introduction.tex}
+\input{tex/sec-coordinate-frames}
+\input{tex/sec-spherical-geometry}
+\input{tex/sec-signal-process}
+\input{tex/4-gps-coordinate-frames-time-reference-and-orbits}
+\input{tex/5-measurements-and-errors}
+\input{tex/6-pvt-estimation}
+\input{tex/7-precise-positioning}
+% \input{tex/sec-inertial-navigation}
+\input{tex/sec-loxodromes}
+\input{tex/sec-kalman}
+
+\end{document}

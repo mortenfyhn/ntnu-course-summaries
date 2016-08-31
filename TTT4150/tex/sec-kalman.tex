@@ -1,0 +1,72 @@
+%!TEX root = ../TTT4150-Summary.tex
+\section{Kalman filtering}
+
+A \emph{Kalman filter} recursively estimates the state of a process, such that it minimizes the mean squared error. Or, maximize separation of signal and noise.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Process model}
+
+The \emph{discretized} process is
+\begin{equation}
+\begin{split}
+	x_k &= \Phi x_{x-1} + w_{k-1} \\
+	z_k &= H x_k + v_k
+\end{split}
+\end{equation}
+where
+\begin{itemize}
+	\item $\Phi$ is the (state) \emph{transition matrix},
+	\item $H$ is the \emph{design matrix},
+	\item $w_k$ is random white process noise $p(w) \sim N(0,Q)$, and
+	\item $v_k$ is random white measurement noise $p(v) \sim N(0,R)$.
+\end{itemize}
+
+The transition matrix is calculated from the continuous-time representation
+\begin{equation}
+	\dot{x} = F x + G u
+\end{equation}
+as
+\begin{equation}
+	\Phi = \euler^{F \Delta t} = I + F \Delta t + \frac{(F \Delta t)^2}{2!} + \dots
+\end{equation}
+or, for time-variant $F$
+\begin{equation}
+	\Phi_k = \laplace{(sI - F)^{-1}}_{t = \Delta t}.
+\end{equation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Method}
+
+The goal is to compute an \emph{a posteriori} estimate\footnote{\emph{After} measuring.} $\hat{x}_k$ based on an \emph{a priori} estimate\footnote{\emph{Before} measuring.} $\hat{x}_k^-$, a measurement $z_k$, and a measurement prediction $H \hat{x}_k^-$. This is how we do it:
+\begin{equation}
+	\hat{x}_k = \hat{x}_k^- + K_k(z_k - H \hat{x}_k^-)
+\end{equation}
+
+The gain matrix $K$ is chosen to minimize the a posteriori error covariance $P_k = E \left[ e_k e_k\T \right]$, where $e_k \equiv x_k - \hat{x}_k$. Some math leads to
+\begin{equation}
+	K_k = P_k^- H\T \left( H P_k^- H\T + R \right)^{-1}.
+\end{equation}
+We have $\lim_{R \rightarrow 0} K_k = H^{-1}$, which gives $\hat{x}_k = H^{-1} z_k$. Makes sense, because zero measurement error covariance $R$ should let us trust the measurement fully. We also have $\lim_{P_k^- \rightarrow 0} K_k = 0$, giving $\hat{x}_k = \hat{x}_k^-$. Also makes sense, because zero a priori estimate error covariance $P_k^-$ should make us not trust the measurement at all.
+
+These equations are split into the time update equations
+\begin{equation}
+\begin{split}
+	\hat{x}_k^- &= \Phi_{k-1} \hat{x}_{k-1} \\
+	P_k^-       &= \Phi_{k-1} \hat{P}_{k-1} \Phi_{k-1}\T + Q
+\end{split}
+\end{equation}
+and the measurement update equations
+\begin{equation}
+\begin{split}
+	K_k       &= P_k^- H\T \left( H P_k^- H\T + R \right)^{-1} \\
+	\hat{x}_k &= \hat{x}_k^- + K_k(z_k - H \hat{x}_k^-) \\
+	\hat{P}_k       &= \left( I - K_k H \right) P_k^-.
+\end{split}
+\end{equation}
+
+Often, $Q$ and $R$ are simply considered tuning parameters. Large $R$ means we expect a large measurement error variance, and the filter converges slowly because it cannot trust the measurements. A small $R$ does the opposite: Converges fast, but possibly so fast that the estimate follows the measurement noise.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{IMU + GNSS integration}
+
+GNSS has good long time accuracy, and gives measurements without drift. INS has good short time accuracy, but drifts a lot. Combining both in a \emph{complementary filter} gives ``the best of both worlds''.
