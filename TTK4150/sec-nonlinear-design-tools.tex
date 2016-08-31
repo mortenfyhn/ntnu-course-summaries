@@ -1,0 +1,24 @@
+%!TEX root = TTK4150-Summary.tex
+\section{Nonlinear design tools}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Backstepping}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{General idea}
+Start by selecting a state $x_i$, where $i$ is some index. Given $\dot{x}_i = f_i(x)$, consider one of the other states present in $f_i$ as the input. Let's call this state $x_j$. Find an expression $x_j = \phi_j(x)$ that stabilizes $x_i$. (Using a Lyapunov function $V(x_i)$.) Then, define $z_j = x_j - \phi_j(x)$, and rewrite the system in terms of $x_i$ and $z_j$. Now, considering $\dot{z}_j$, use the same method to find an expression for a state present in $\dot{z}_j$ to stabilize $z_j$ and $x_i$. (Now with a Lyapunov function $V(x_i, z_j)$.) Keep going until you run out of states to stabilize.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Passivity-based control}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+	\dot{x} &= f(x,u) \label{eq:pin-pout-x} \\
+	y       &= h(x)   \label{eq:pin-pout-y}
+\end{align}
+
+\paragraph{Theorem 14.4}
+If \eqref{eq:pin-pout-x}--\eqref{eq:pin-pout-y} is
+\begin{itemize}
+	\item passive with an RU, pos. def. storage function,
+	\item zero-state observable
+\end{itemize}
+then $x = 0$ can be globally stabilized by $u = -\phi(y)$, with $\phi$ locally Lipschitz with $\phi(0) = 0$, $y\T \phi(y) > 0 \forall y \neq 0$.

@@ -1,0 +1,105 @@
+%!TEX root = TTK4150-Summary.tex
+\section{Feedback linearisation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Input-output linearisation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+	\dot{x} &= f(x) + g(x)u \label{eq:siso-x} \\
+	y       &= h(x)         \label{eq:siso-y}
+\end{align}
+
+\paragraph{Definition 13.2 (relative degree)}
+The relative degree $\rho$ of \eqref{eq:siso-x}--\eqref{eq:siso-y} is equal to the number of times $y$ must be differentiated until $u$ appears.
+
+\paragraph{Theorem 13.1}
+The system \eqref{eq:siso-x} can be input-output linearised if the relative degree is well defined in the region of interest $\mathbb{D}_0$.
+
+\paragraph{Minimum phase}
+The system \eqref{eq:siso-x}--\eqref{eq:siso-y} is \emph{minimum phase} if, for the zero-dynamics $\dot{\eta} = f_0(\eta,0)$, $\eta = 0$ is AS.
+
+\paragraph{Method}
+The system is given by \eqref{eq:siso-x}--\eqref{eq:siso-y}. First determine relative degree $\rho$. Define
+\begin{equation}
+	\xi =
+	\begin{bmatrix}
+		\xi_1 \\ \vdots \\ \xi_\rho
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		y \\ \vdots \\ y^{(\rho-1)}
+	\end{bmatrix}
+\end{equation}
+so that
+\begin{equation}
+	\dot{\xi} =
+	\begin{bmatrix}
+		\dot{\xi}_1 \\ \vdots \\ \dot{\xi}_\rho
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		\xi_2 \\ \vdots \\ L_f^\rho h + L_g L_f^{\rho-1} h \cdot u
+	\end{bmatrix}
+	.
+\end{equation}
+Then choose $n-\rho$ coordinates
+\begin{equation}
+	\eta =
+	\begin{bmatrix}
+		\eta_1 \\ \vdots \\ \eta_{n-\rho}
+	\end{bmatrix}
+\end{equation}
+with the coordinate transformation
+\begin{equation}
+	z = T(x) =
+	\begin{bmatrix}
+		\eta_1 \\ \vdots \\ \eta_{n-\rho} \\ \xi_1 \\ \vdots \\ \xi_\rho
+	\end{bmatrix}
+\end{equation}
+and choose $\eta$ such that
+\begin{itemize}
+	\item $T$ is a diffeomorphism,
+	\item $L_g \eta_i = 0$,
+	\item $\eta_i(0) = 0$.
+\end{itemize}
+We have then that
+\begin{equation}
+	\dot{\eta}_j = \pd{\eta_j}{x} \dot{x} = L_f \eta_j + \underbrace{L_g \eta_j}_{= 0} \cdot u = f_{0_j} (\eta_i, \xi_i)
+\end{equation}
+and we can write the system on normal form
+\begin{equation}
+	\begin{bmatrix}
+		\dot{\eta}_1        \\
+		\vdots              \\
+		\dot{\eta}_{n-\rho} \\
+		\dot{\xi}_1         \\
+		\vdots              \\
+		\dot{\xi}_\rho
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		f_{0_1}(\eta_i, \xi_i)        \\
+		\vdots                        \\
+		f_{0_{n-\rho}}(\eta_i, \xi_i) \\
+		\xi_2                         \\
+		\vdots                        \\
+		L_f^\rho h + L_g L_f^{\rho-1} h \cdot u
+	\end{bmatrix}
+	.
+\end{equation}
+Then choose $u$ to cancel the nonlinearities:
+\begin{equation}
+	u = \frac{1}{L_g L_f^{\rho-1} h} (-L_f^\rho h + v)
+\end{equation}
+This leads to
+\begin{gather}
+	\dot{\eta} = f_0(\eta,\xi) \\
+	\dot{\xi} = 
+	\begin{bmatrix}
+		\xi_2 \\ \vdots \\ v
+	\end{bmatrix}
+\end{gather}
+Then analyse the zero-dynamics---the internal dynamics when the output is kept zero by the input:
+\begin{equation}
+	\dot{\eta} = f_0(\eta,0)
+\end{equation}
