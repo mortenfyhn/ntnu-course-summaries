@@ -1,0 +1,33 @@
+%%
+%% Package 'mortenmath'
+%% 
+%% (c) Morten Fyhn Amundsen
+%%
+%% This package defines some math-related commands that I use a lot.
+%%
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+\ProvidesPackage{mortenmath}
+  [2015/08/21 Morten's math package]
+
+\RequirePackage{bm, amsmath}
+
+%% Matrix and vector commands
+\newcommand*{\V}[1]{\boldsymbol{\mathbf{#1}}}      % Vector (bold, upright)
+\newcommand*{\M}[1]{\bm{#1}}                       % Matrix (bold, italic)
+\newcommand*{\T}{^{\scriptscriptstyle \mathrm{T}}} % Transpose
+\newcommand*{\I}{\mathbf{I}}                       % Identity matrix
+
+%% Trigonometry commands
+\newcommand*{\s}{\operatorname{s}}   % Sin shorthand
+\renewcommand*{\c}{\operatorname{c}} % Cos shorthand 
+\renewcommand*{\t}{\operatorname{t}} % Tan shorthand
+
+%% Upright subscripts for math
+\newcommand*{\sub}[1]{_{\mathrm{#1}}}
+
+%% 'Evaluated at' bar with decent height
+\newcommand*{\evalat}[1]{\biggr\rvert_{#1}}
+
+\endinput
+%%
+%% End of file 'mortenmath.sty'.

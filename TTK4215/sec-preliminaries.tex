@@ -1,0 +1,158 @@
+%!TEX root = TTK4215-Summary.tex
+\section{Preliminaries}
+\subsection{Norms}
+We say $x \in \mathcal{L}_p$ when $||x||_p$ exists.
+\paragraph{General $p$-norm}
+\begin{equation}
+	||x||_p
+	=
+	\left(
+		\int_{0}^{\infty} |x(t)|^p \dif t
+	\right)
+	^{1/p}
+\end{equation}
+
+\paragraph{$\mathcal{L}_\infty$-norm}
+\begin{equation}
+	||x||_\infty
+	=
+	\sup_{t \geq 0} |x(t)|
+\end{equation}
+
+
+%!TEX root = TTK4215-Summary.tex
+\subsection{Models for dynamic systems}
+
+\begin{equation}
+	\V{\dot{x}}
+	=
+	\M{A} \V{x}
+	+
+	\M{B} \V{u}
+\end{equation}
+
+\begin{equation}
+	\V{y}
+	=
+	\M{C}\T \V{x}
+\end{equation}
+
+\paragraph{Controllability}
+\begin{equation}
+	\M{P}_c
+	\triangleq
+	\begin{bmatrix}
+		\M{B} \\ \M{AB} \\ \vdots \\ \M{A}^{n-1}\M{B}
+	\end{bmatrix}
+\end{equation}
+
+If $\M{P}_c$ is nonsingular, the system is controllable, and can be transformed to the \emph{controllability canonical form} by
+\begin{equation}
+	\V{x}_c
+	=
+	\M{P}_c^{-1} \V{x}
+\end{equation}
+
+\paragraph{Properness}
+A transfer function $\M{G}(s) = \frac{\M{N}(s)}{\M{D}(s)}$ is
+\begin{itemize}
+	\item \emph{proper} if $\deg(\M{N}) \leq \deg(\M{D})$,
+	\item \emph{biproper} if $\deg(\M{N}) = \deg(\M{D})$,
+	\item \emph{stricly proper} if $\deg(\M{N}) < \deg(\M{D})$.
+\end{itemize}
+
+\subsection{Transfer function properties}
+Consider the polynomial
+\begin{equation}
+	X(s) = \alpha_n s^n + \alpha_{n-1} s^{n-1} + \cdots + \alpha_0
+\end{equation}
+and the transfer function
+\begin{equation}
+	G(s) = \frac{Z(s)}{R(s)}
+	.
+\end{equation}
+
+\paragraph{Monic:} $X(s)$ is \emph{monic} iff $\alpha_n = 1$.
+
+\paragraph{Hurwitz:} $X(s)$ is \emph{Hurwitz} if all roots of $X(s) = 0$ are in the left half plane.
+
+\paragraph{Minimum phase:} A system defined by the t.f. $G(s)$ is \emph{minimum phase} iff $Z(s)$ is Hurwitz.
+
+\paragraph{Stability:} A system defined by the t.f. $G(s)$ is \emph{stable} if $R(s)$ is Hurwitz.
+
+\paragraph{Coprime:} Two polynomials are \emph{coprime} if they have no common factors other than a constant.
+
+\subsection{(Strictly) positive real transfer functions}
+
+\subsection{Positive Real (PR)}
+\paragraph{Definition 3.5.1}
+A rational function $G(s)$ of the complex variable $s=\sigma + j\omega$ is called PR if
+\begin{itemize}
+	\item $G(s)$ is real for real $s$
+	\item $\Re[G(s)] \geq 0 \quad \forall \quad \sigma > 0$
+\end{itemize}
+
+\paragraph{Lemma 3.5.1}
+A rational proper transfer function $G(s)$ is PR iff
+\begin{itemize}
+	\item $G(s)$ is real for real $s$
+	\item $G(s)$ is analytic in $\Re[s] \geq 0$, and the poles on the $j\omega$-axis are simple and such that the associated residues are real and positive.
+	\item For all real value $\omega$ for which $s = j \omega$ is not a pole of $G(s)$, one has $\Re[G(j\omega)]$
+\end{itemize}
+
+\subsection{Strict Positive Real (SPR)}
+\paragraph{Definition 3.5.2}
+Assume $G(s)$ is not identically zero for all $s$. Then $G(s)$ is SPR if $G(s-\epsilon)$ is PR for some $\epsilon > 0$.
+
+\paragraph{Theorem 3.5.2}
+(Necessary and sufficient conditions.) Assume that a rational function $G(s)$ of the complex variable $s = \sigma + j\omega$ is real for real $s$ and is not identically zero for all $s$. Let $n^*$ be the relative degree of $G(s) = Z(s) / R(s)$ with $|n^*| \leq 1$. Then, $G(s)$ is SPR iff
+\begin{itemize}
+	\item $G(s)$ is analytic for $\sigma \geq 0$
+	\item $\Re[G(j\omega)] > 0 \quad \forall \quad \omega$
+	\item When $n^* = 1, \quad \lim_{|\omega| \to \infty} \omega \Re[G(j\omega)] > 0 $
+	\item When $n^* = -1,\quad \lim_{|\omega| \to \infty} \frac{G(j\omega)}{j\omega} >0 $
+\end{itemize}
+
+\paragraph{Corollary 3.5.1}
+\begin{itemize}
+	\item $G(s)$ is PR/SPR iff $1/G(s)$ is PR/SPR
+	\item If $G(s)$ is SPR, then, $|n^*| \leq 1$, and the zeros and poles of $G(s)$ lie in $\Re[s]<0$.
+	\item When $n^* = 1, \quad \lim_{|\omega| \to \infty} \omega \Re[G(j\omega)] > 0 $
+	\item When $n^* = -1,\quad \lim_{|\omega| \to \infty} \frac{G(j\omega)}{j\omega} >0 $
+\end{itemize}
+
+\paragraph{KYP Lemma (3.5.2)}
+Given a square matrix $A$ with eigenvalues $\Re(\lambda) \leq 0$, a vector $B$ such that $(A,B)$ controllable, a vector $C$, and scalar $d \geq 0$, then the t.f.
+\begin{equation}
+	G(s) = d + C\T (s \mathrm{I} - A)^{-1} B
+\end{equation}
+is PR iff $\exists$ a symmetric pos. def. matrix $P$ and a vector $q$ such that
+\begin{gather}
+	A\T P + P A = -q q\T \\
+	P B - C = \pm \sqrt{2d} \cdot q
+	.
+\end{gather}
+
+\paragraph{LKY Lemma (3.5.3)}
+Given a stable matrix $A$, a vector $B$ such that $(A,B)$ controllable, a vector $C$ and a scalar $d \geq 0$, then the t.f.
+\begin{equation}
+	G(s) = d + C\T (s \mathrm{I} - A)^{-1} B
+\end{equation}
+is SPR iff for any pos. def. matrix $L$, $\exists$ a symmetric pos. def. matrix $P$, a scalar $\nu > 0$ and a vector $q$ such that
+\begin{gather}
+	A\T P + P A = -q q\T - \nu L \\
+	P B - C = \pm q \sqrt{2d}
+	.
+\end{gather}
+
+\paragraph{MKY Lemma (3.5.4)}
+Given a stable matrix $A$, vectors $B,C$, and a scalar $d \geq 0$, we have: If
+\begin{equation}
+	G(s) = d + C\T (s \mathrm{I} - A)^{-1} B
+\end{equation}
+is SPR, then for any $L = L\T > 0$, $\exists$ a scalar $\nu > 0$, a vector $q$ and a $P = P\T > 0$ such that
+\begin{gather}
+	A\T P + P A = -q q\T - \nu L \\
+	P B - C = \pm q \sqrt{2d}
+	.
+\end{gather}

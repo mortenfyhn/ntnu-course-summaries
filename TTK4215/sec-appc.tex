@@ -1,0 +1,29 @@
+%!TEX root = TTK4215-Summary.tex
+\section{Adaptive pole placement control (APPC)}
+APPC is pretty cool, because it does not require a plant of minimum phase (as opposed to MRAC).
+
+\subsection{Indirect PPC}
+Given the system
+\begin{equation}
+	y_p = \frac{Z_p(s)}{R_p(s)} u_p
+\end{equation}
+where
+\begin{itemize}
+	\item $R_p$ is monic, of known degree $n$,
+	\item $Z_p, R_p$ are coprime,
+	\item $G_p$ strictly proper ($\deg{Z_p} < n$).
+\end{itemize}
+
+The objective is to choose $u_p$ so that the closed-loop poles are the roots of a polynomial $A^*(s)$. Can be done by choosing $P$ (degree $q+n-1$) and $L$ (monic, degree $n-1$) such that
+\begin{equation}
+	L Q_m R_p + P Z_p = A^*
+\end{equation}
+is satisfied for $A^*$ of degree $2n+q-1$. $Q_m$ is chosen so that
+\begin{equation}
+	Q_m y_p = 0,
+\end{equation}
+and the control input is given by
+\begin{equation}
+	Q_m L u_p = -P (y_p - y_m)
+	.
+\end{equation}
