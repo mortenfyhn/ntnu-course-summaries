@@ -1,0 +1,456 @@
+\documentclass[a4paper, 12pt]{article}
+
+\usepackage{authblk}
+\usepackage{amsmath}
+\usepackage[usenames, dvipsnames]{xcolor}
+\newcommand{\comment}[1]{\textcolor{RedOrange}{#1}}
+
+\title{Summary of\\TTK4145 Real-Time Programming}
+\date{\today}
+\author{Morten Fyhn Amundsen}
+\affil{NTNU}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Disclaimer}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+These are notes from some parts of the TTK4145 curriculum. None of this is really mine.
+\comment{add something about two phase commit}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Reliability and fault tolerance}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\comment{something about process pairs}
+Four sources of faults:
+\begin{itemize}
+	\item Inadequate spec.
+	\item Software design errors.
+	\item Hardware failure.
+	\item Interference in communication.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Reliability, failure, and faults}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+A fault that becomes active leads to an error which can lead to a failure.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Failure modes}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}
+	\item Value failure.
+	\item Time failure.
+	\item Arbitrary failure: Combination of the above.
+\end{itemize}
+Types of system failures:
+\begin{itemize}
+	\item aoditd
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Fault prevention and fault tolerance (2.3)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Fault prevention}
+Fault avoidance (don't create faults) and fault removal (un-create the ones you've made).
+
+\subsubsection{Fault tolerance}
+\begin{itemize}
+	\item Full fault tolerance: No significant degradation.
+	\item Graceful degradation: System continues, but partially degraded during recovery.
+	\item Fail safe: Maintains integrity, temporarily halts.
+\end{itemize}
+
+\subsubsection{Redundancy}
+\paragraph{Static redundancy: } Several identical components with voting.
+\paragraph{Dynamic redundancy: } The module informs somehow whether its output is erroneous.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{\textit{N}-version programming (2.4)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\(N\) independent programs for the same task are made. A driver invokes all \(N\) programs, waits for them to finish, and compares outputs.
+
+\subsubsection{Vote comparison}
+Easy for exact values, tricky for `analog' values.
+
+\subsubsection{Principal issues in \textit{N}-version programming}
+\begin{itemize}
+	\item Initial spec: Will mess up all \(N\) if incorrect.
+	\item Independence of design effort: All is lost if the versions still give identical errors.
+	\item Budget: Super costly to develop and maintain \(N\) times as much software.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Software dynamic redundancy (2.5)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Error detection}
+\begin{itemize}
+	\item Replication checks (N-version programming).
+	\item Timing checks (watchdog, deadline).
+	\item Reversal checks (calculate input from output and compare).
+	\item Coding checks (checksums).
+	\item Reasonableness checks (variable range, assertions).
+	\item Structural checks (integrity of data structures).
+	\item Dynamic reasonableness check (reasonable compared to prev. value).
+\end{itemize}
+
+\subsubsection{Damage confinement and assessment}
+\paragraph{Modular decompositon:} Confine errors by modularising and good interfaces.
+\paragraph{Atomic actions:} An activity that is completed with \emph{no} interaction to the system (also called transactions).
+
+\subsubsection{Error recovery}
+\paragraph{Forward error recovery} tries to continue by making selective corrections to the state. Pretty fast, often necessary for time-critical things.
+\paragraph{Backward error recovery} restores the system to a safe, previous state (a \emph{recovery point}). Creating a recovery point is called \emph{checkpointing}. Problematic if something has happened in hardware since the last recovery point. For concurrent processes, one must use \emph{recovery lines}.
+\paragraph{Domino effect:} If a thread discovers an error and rolls back past some communication, the other side of the communication must also roll back. This can cascade backwards, rolling back way too much. To avoid this, we need a consistent state across both processes that they can roll back to. Discussed more in Section \ref{sec:atomic}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The recovery block}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+A normal programming language block, but with a recovery point at the entrance and an acceptance test at the exit. If the test fails, the block recovers and tries to execute an alternative module (i.e. do the thing some other way and pray that works).
+% \lstinputlisting[language=Erlang]{recovery_block.txt}
+
+\subsection{Comparison between \textit{N}-version and recovery blocks (2.7)}
+\begin{itemize}
+	\item Static/dynamic redundancy: \(N\)-version uses static redundancy (errors don't affect execution).
+	\item Overhead: \(N\)-version requires a driver, recovery blocks are extra overhead by themselves.
+	\item Spec. errors: Both are vulnerable to bad spec.
+	\item Error detection: In difficult voting situations, acceptance testing may be more flexible.
+	\item Atomicity: \(N\)-version avoids damage to environment because errorneous results are discarded before use. Backward error recovery does not.
+\end{itemize}
+Lesson: Consider using both.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Dynamic redundancy and exceptions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Exceptions and handling can be used to:
+\begin{itemize}
+	\item cope with abnormal environment conditions;
+	\item enable toleration of program design faults;
+	\item provide general-purpose error detection and recovery.
+\end{itemize}
+
+\subsubsection{Ideal fault-tolerant system components}
+A component that takes requests, and possibly makes further requests before yielding a response. Two possible error types:
+\begin{itemize}
+	\item Interface exceptions: Illegal requests.
+	\item Internal malfunction.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Safety, reliability, and depentability}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Dependability}
+\begin{itemize}
+	\item Threats: Circumstances causing non-dependability.
+	\item Means: Means to deliver a dependable service with the required confidence.
+	\item Attributes: The way the quality can be judged.
+\end{itemize}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Shared variable-based synchronization and communication}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Shared variables:} Objects that are accessed by several tasks. Often reasonable when tasks use a common physical memory.
+\paragraph{Message passing:} Explicit exchange of data between tasks. Can be good in systems with no common memory.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Mutual exclusion and condition synchronization (5.1)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Critical section:} A sequence of statements that must be executed indivisibly.
+\paragraph{Mutual exclusion:} The synchronisation to allow it.
+\paragraph{Condition synchronisation:} When a task must wait for another task to finish something.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Busy waiting (5.2)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+It'a a spin lock. If the resource is busy, the process keeps checking until it is free. Works for condition sync., not so much for mutual exclusion (difficult/complex). Repeatedly testing a variable/flag can lead to livelock. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Suspend and resume (5.3)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Similar, but a process suspends (stops running) while it waits. Requires even more complicated code to avoid race conditions, and isn't really used on its own. Ada includes a safe version of suspend and resume.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Semaphores (5.4)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{\texttt{wait(S)}:} Wait until S is greater than zero, then decrement it by one and proceed.
+\paragraph{\texttt{signal(S)}:} Increment S by one.
+
+\subsubsection{Suspended tasks}
+Busy waiting is bad because it wastes a lot of CPU time. We use suspension instead: \texttt{wait} on a zero semaphore invokes the RTSS\footnote{Run-time support system.}. The RTSS puts the task in a queue of tasks waiting on that semaphore. At some point, we will be allowed to execute (if the code is correct).
+
+\subsubsection{Implementation}
+The scheduler will make sure to make \texttt{wait} and \texttt{signal} \emph{non-preemtible}: Tasks may not be interrupted while executing these operations. The RTSS may disable interrupts briefly.
+
+\subsubsection{Liveness}
+\textbf{Liveness} is when a task does not suffer from any of the following:
+\begin{itemize}
+	\item Deadlock: System stuck, cannot proceed.
+	\item Livelock: E.g. being stuck in a spin lock.
+	\item Starvation: A task is never executed because it is never scheduled.
+\end{itemize}
+
+\subsubsection{Binary and quantity semaphores}
+A binary semaphore can be either 1 or 0. A quantity semaphore can be \(0 \dots N\) where \(N\) is some maximum value. The latter can be used to allow a precice maximum number of tasks concurrent access to a resource.
+
+\subsubsection{Semaphores in Ada}
+Ada does not directly support semaphores, but you can write your own pretty easily as an abstract structure.
+
+\subsubsection{Semaphores in Java}
+Java has several standard packages with concurrency things. Semaphores are included in one of them.
+
+\subsubsection{Semaphores in C/POSIX}
+The POSIX API provides counting semaphores.
+
+\subsubsection{Criticism of semaphores}
+Semaphores are error-prone. One error can mess up your whole program. Semaphores aren't really used now, at least not on their own.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Conditional critical regions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+A \emph{critical region} is some code that is guaranteed to be run under mutual exclusion. A \emph{conditional critical region} is a critical region with a guard. (It must both get inside the mutual exclusion and pass the guard.)
+
+An example is a bounded buffer. A producer can only write if a) there is room in the buffer \emph{and} b) it gets mutually exclusive access.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Monitors}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CCRs are kinda bad because they can be spread throughout the program.
+A \emph{monitor} encapsulates all critical regions as procedures in a single module. All procedure calls are guaranteed to execute with mutual exclusion. The RTSS implements correct entry and exit protocols automatically. Condition synchronisation is still needed.
+\paragraph{Condition variable:} A semaphore-like thing that also uses \texttt{wait} and \texttt{signal} operators. \texttt{wait} \emph{always} blocks. A blocked task then releases the mutually exclusive hold on the monitor. A \texttt{signal} will release one blocked task, if any. If there are none, \texttt{signal} does nothing.
+\subsubsection{Criticism of monitors}
+Good for mutual exclusion, but clumsy for condition synchronisation (must resort to low-level semaphore-like primitives). The internals of a monitor can be hard to read
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Mutexes and condition variables in C/POSIX}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Mutexes and condition variables can be combined to function as a monitor.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Protected objects in Ada}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+A protected object encapsulates data and allows only mutually exclusive access. Similar to monitors and CCRs. The data can be accessed in three ways:
+\begin{itemize}
+	\item \textbf{Procedures} give read/write access.
+	\item \textbf{Functions} give read-only access.
+	\item \textbf{Entries} are like procedures, but must pass a boolean guard before entering.
+\end{itemize}
+All these are guaranteed to operate in mutual exclusion. Many functions can do their reading concurrently, but not while a procedure or entry is running.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Synchronized methods in Java}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+A method with the \texttt{synchronize} modifier is protected by a lock. As long all functions on a module with concurrent access are synchronised, full mutual exclusion is guaranteed. If access is only needed in part of the function, \emph{block synchronisation} may be used.
+
+\subsubsection{Waiting and notifying}
+\begin{itemize}
+	\item \texttt{wait()} tells the calling thread to release the lock and sleep until it's awakened.
+	\item \texttt{notify()} wakes one waiting thread. It does not release the lock. The awokened thread keeps waiting until the lock is available.
+	\item \texttt{notifyAll()} is like \texttt{notify}, but wakes all sleeping threads.
+\end{itemize}
+It is safe, but a bit wasteful, to always check the waiting conditions and call \texttt{wait} in a loop, and always wake with \texttt{notifyAll}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Shared memory multiprocessors}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+A perfect program will work both on one processor and on SMP (symmetric multiprocessor). This is never the case, and programs that seem to be goon on one CPU might be awful on SMP.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Atomic actions, concurrent tasks and reliability}\label{sec:atomic}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Atomic actions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Definition:} An action that---so far as other tasks are concerned---is indivisible and instantaneous.
+
+\subsubsection{Two-phase atomic actions}
+\begin{enumerate}
+	\item The coordinator gathers votes on whether to commit.
+	\item The coordinator makes a decision and notifies.
+\end{enumerate}
+
+\subsubsection{Atomic transactions}
+An atomic action that may either succeed or fail (that is, it's okay to fail in a way it cannot recover from). In case of failure, it rollbacks. A normal atomic action would make a mess in case of unrecoverable failure.
+
+\subsubsection{Requirements for atomic actions}
+\begin{itemize}
+	\item Well-defined boundaries: The start boundary is the location in each task where the action begins. The end boundary is equivalent for the end of the action. The side boundaries separate participants from non-participants.
+	\item Indivisibility: Allowing communication between participants and no one else.
+	\item Nesting: Nesting is okay as long as the inner action is fully contained by the outer.
+	\item Concurrency: Concurrent atomic actions should be possible.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Recoverable atomic actions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Backward error recovery}
+A \emph{conversation} is an atomic action that also has a recovery block:
+\begin{itemize}
+	\item Upon entry, all tasks make recovery points.
+	\item As with atomic actions, no communication except between participants.
+	\item All tasks must pass an acceptance test to exit.
+	\item If any participant fails, all participants roll back to the recovery point.
+\end{itemize}
+In some definitions, all tasks must enter before any may leave. Alternatively, participation can be made non-compulsory. Then a task with a deadline can leave and do something else if it needs to.
+
+\subsubsection{Forward error recovery}
+Main difference: Uses exceptions. If an exception occurs, it is raised in all participants. (Asynchronous exceptions.)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Asynchronous notification}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Resumption:} (Also called event handling.) Behaves like a software interrupt. A handler responds to the asynchronous event. This changes the flow of control temporarily: The interrupted task continues when the handler is finished.
+\paragraph{Termination:} Each task specifies a domain in which it can accept asynchronous notifications. A notification will terminate the domain. Called ATC: Asynchronous transfer of control.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Scheduling real-time systems}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Scheduling is either \emph{static} or \emph{dynamic}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The cyclic executive approach}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Given a fixed set of periodic tasks you can plan the schedule in advance. A number of fixed-duration minor cycles make up a major cycle. Repeatedly running the major cycle will give proper scheduling. This approach only works for simple systems.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Task-based scheduling}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Scheduling approaches}
+\begin{itemize}
+	\item Fixed-priority scheduling
+	\item Earliest deadline first
+	\item Value-based scheduling
+\end{itemize}
+
+\subsubsection{Scheduling characteristics}
+\begin{itemize}
+	\item \emph{Sufficiency:} The test can guarantee that all deadlines are met.
+	\item \emph{Necessity:} Failing the test will lead to missing a deadline.
+	\item \emph{Sustainability:} If improved circumstances do not make a previosly passed test fail.
+\end{itemize}
+
+\subsubsection{(Non-) Preemtion}
+In a preemptive scheme, a higher-priority task will immediately be allowed to run. In nonpreemtiveness, it must wait for the lower-priority task to finish.
+
+\subsubsection{Simple task model}
+For analysis, we assume the program follows a simple model:
+\begin{itemize}
+	\item Fixed set of tasks.
+	\item Periodic tasks, known periods.
+	\item Independent tasks.
+	\item No overhead.
+	\item Deadlines equal to periods.
+	\item Fixed worst-case execution time.
+	\item No internal suspension points.
+	\item A single CPU.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Fixed-priority scheduling}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Each task is assigned a unique priority based on its period. (Frequent task gets high priority).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Utilisation-based schedulability tests for FPS}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+If the total utilisation for a task set is below a bound, all tasks will meet their deadlines. The bound decreases when the number of tasks increases, but no lower than \(69.3 \; \% \). The utilisation and bound is given by \( \sum_{i=1}^{N} \left( \frac{C_i}{T_i} \right) \leq N (2^{\frac{1}{N}} - 1) \), where \(C\) is the worst-case execution time, \(T\) is the period, and \(N\) is the number of tasks.
+
+This test is sufficient, but not necessary.
+
+\subsubsection{Improved utilisation-based tests for FPS}
+Group tasks into task families within which all tasks' periods are multiples of each other. The \(N\) from the equation above instead becomes the number of families. This is better, but not sustainable.
+
+Another test is \( \prod_{i=1}^{N} \left( \frac{C_i}{T_i} + 1 \right) \leq 2 \).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Response time analsis for FPS}\label{sec:rta}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Starting with the highest-priority task, calculate worst-case response time of each task:
+\begin{equation*}
+	w_i^{n+1} = C_i + \sum_{j \in hp(i)} \left\lceil \frac{w_i^n}{T_j} \right\rceil C_j
+\end{equation*}
+where \(C\) is the computation time, \(T\) is the period, \(hp(i)\) is the set of higher priority tasks, and \(w_i^0 = C_i\). If at some point \(w_i^n = w_i^{n+1}\), then that is the worst-case response time. \comment{mention stopping criteria}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Sporadic and aperiodic tasks}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Assume \(T\) is the minimum interval of a task, and that the deadline \(D\) can be shorter than \(T\). The same method as in Section \ref{sec:rta} works here, but with stopping criterion \(w_i^{n+1} > D_i\).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Task systems with \emph{D} < \emph{T}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+For \(D < T\), \emph{deadline monotonic} priority ordering (DMPO) is optimal.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Task interactions and blocking}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Priority inversion} is when poor scheduling makes an important thread wait for less important threads. Example: A low-pri thread runs first, and gets a mutex. A mid-pri preempts it. A high-pri preempts that, and wants the mutex. It suspends because it's must wait on the mutex, and the mid pri gets to continue. When the mid-pri is done, the low-pri can run again, and finish with the mutex. Only after that will the high-pri be allowed to run again. (Here it would be better to prioritise finishing the thread that had the mutex required, and running the mutex-independent mid-pri after the high-pri.)
+\paragraph{Priority inheritance:} If a high-pri needs a lower-pri to do something first, the lower-pri inherits the priority of the high-pri, so it can finish quickly.
+
+\comment{maybe something about max blocking time and usage and whatnot}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Priority ceiling protocols}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Running a priority ceiling protocol on one processor gives:
+\begin{itemize}
+	\item A high-pri can be blocked no more than once by a lower-pri.
+	\item Deadlocks are prevented.
+	\item Transitive blocking is prevented.
+	\item Mutual exclusive access to resources is ensured.
+\end{itemize}
+
+\subsubsection{Original ceiling priority protocol}
+\begin{enumerate}
+	\item Tasks have a static default priority.
+	\item Resources have a static ceiling value (equal to the maximum priority of any task accessing it).
+	\item Tasks have a dynamic priority that is the maximum of its static priority and any inherited priority (from blocking higher-pris).
+	\item A task can only lock a resource if its dynamic priority is higher than the ceiling of any currently locked resource.
+\end{enumerate}
+With this, a second resource can only be locked if there is no higher priority task that uses both resources. A high-priority task can only be blocked once by any lower-priority task.
+
+\subsubsection{Immediate ceiling priority protocol}
+\begin{enumerate}
+	\item Tasks have a static default priority.
+	\item Recources have a static ceiling value defined (equal to the maximum priority of any task accessing it).
+	\item Tasks have a dynamic priority that is the maximum of its static priority and the ceiling value of any recources it has locked.
+\end{enumerate}
+This way a task can only be blocked in the beginning of its execution.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{An extendible task model for FPS}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Release jitter}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Java transactions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{What is a transaction?}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+A transaction (or atomic transaction) have these properties:
+\begin{itemize}
+	\item \emph{Atomicity:} Completes successfully or rolls back all its effects.
+	\item \emph{Consistency:} Produces consistent results.
+	\item \emph{Isolation:} Intermediate states are hidden. Transactions appear to happen serially.
+	\item \emph{Durability:} The effects of a committed transaction are never lost.
+\end{itemize}
+A \emph{coordinator} is associated with every transaction. Informs all participants about whether they should commit or rollback.
+
+\subsection{Atomicity}
+A two-phase commit protocol is usually used to ensure consensus and thus atomicity. If a participant replies with `abort' or does not reply, the whole action aborts. If all answer positive, the coordinator stores the decision and enters phase 2.
+
+\end{document}
