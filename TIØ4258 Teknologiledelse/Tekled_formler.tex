@@ -1,0 +1,166 @@
+\documentclass[a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[norsk]{babel}
+\usepackage{authblk}
+\usepackage{amsmath}
+\usepackage{commath}
+
+\newcommand{\kr}{\text{ kr}}
+\newcommand{\textfrac}[2]{\frac{\text{#1}}{\text{#2}}}
+
+\title{Formler TIØ4258}
+\author{Morten Fyhn Amundsen}
+\affil{NTNU}
+
+\begin{document}
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Formler}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Totalkostnad} $$TC = FC + VC(Q)$$
+\paragraph{Marginalkostnad} $$MC = TC'(Q)$$
+\paragraph{Totalinntekt} $$TR(Q) = Q \cdot P(Q)$$
+\paragraph{Marginalinntekt} $$MR = TR'(Q) = P\left(1-\frac{1}{\varepsilon}\right)$$
+\paragraph{Etterspørselselastisitet} Et mål på hvor mye prisendring påvirker etterspørselen. Maksimal inntekt når $\varepsilon = 1$. Etterspørsel elastisk når $\varepsilon > 1$, uelastisk når $\varepsilon < 1$.
+Elastisk etterspørsel gir positiv $MR$.
+$$\varepsilon = -Q'(P) \cdot \frac{P}{Q}$$
+Huskeregel: $Q'$ = ku derivert = kyr som står i en skråning.
+\paragraph{Gjeldsgrad} $$\textfrac{gjeld}{egenkapital} \quad\text{evt.}\quad \textfrac{forpliktelser}{eiendeler}$$
+\paragraph{Likviditetsgrad 1} $$\textfrac{omløpsmidler}{kortsiktig gjeld}$$
+\paragraph{Likviditetsgrad 2} $$\textfrac{omløpsmidler $-$ varelager}{kortsiktig gjeld}$$
+
+\subsection*{Fritt marked}
+$$P = MC$$
+
+\subsection*{Monopol}
+$$MR = MC$$
+
+\subsection*{Beta} $\beta$ er et mål på hvor mye noe svinger i forhold til markedsverdi. Eks: $\beta = 2$ medfører at en aksje går opp 2 \% om markedet går opp 1 \%, og omvendt.
+
+\subsection*{CAPM}
+Capital Asset Pricing Model. Verdien til en aksje går mot kapitalmarkedslinjen: $$r = r_f + \beta (r_m - r_f)$$
+der $r$ er avkastning, $r_f$ er risikofri rente, og $r_m$ er forventet markedsavkastning. $r_m - r_f$ kalles markedsrisikopremie.
+
+\subsection*{WACC}
+(After Tax) Weighted Average Cost of Capital:
+$$WACC = \frac{D}{A} r_D(1-T_C) + \frac{E}{A} r_E$$
+der $T_C$ er skattesats, $E$ er egenkapital, $D$ er gjeld, og $A = E + D$.
+\paragraph{Nettonåverdi med WACC}
+$$(\text{kontantstrøm etter skatt}) = (\text{kontantstrøm før skatt}) \cdot (1-T_c)$$
+Der $T_c$ er skattesatsen.
+
+\subsection*{Profitt}
+$$\pi = TR - TC$$
+Profitten maksimeres når $MR = MC$. I et monopol er maksimal profitt i stedet gitt ved $\pi = P^*Q^*-TC$, der $Q^*$ finnes ved å sette $MR = 0$ og $P^* = P(Q^*)$.
+
+\subsection*{Nåverdi}
+Å få 1000 kroner nå er verdt mer enn 1000 kroner om et år. Tenk slik: <<Hvor mye må jeg sette inn på konto nå for å ende opp med 1000 kroner om et år?>> (Med 3 \% rente blir svaret $\frac{1000 \kr}{1 + 0.03} \approx 971 \kr$.)
+$$NV = \sum_{t=1}^{N} \frac{C_t}{(1+r_t)^t}$$
+der $C_t$ er kontantstrøm i år $t$, $r_t$ er diskontineringsrente i år $t$ og $N$ er levetid.
+
+\paragraph{Tilfelle $N \rightarrow \infty$} $$\sum_{t=1}^{\infty} \frac{K (1+g)^{t-1}}{(1+r)^t} = \frac{K}{r-g}$$
+
+\subsection*{Netto nåverdi}
+$$NNV = -I_0 + NV$$
+der $I_0$ er en investeringsutgift i år 0.
+
+\paragraph{Internrente} er avkastningskravet som gir $NNV = 0$.
+
+\subsection*{Konsumentoverskudd}
+Maksimal betalingsvillighet minus faktisk betaling: $$KO = \int_{0}^{Q} P^*(Q^*) \dif Q^* - P \cdot Q$$
+
+\subsection*{Produsentoverskudd}
+Inntekter minus kostnader: $$PO = P \cdot Q - \int_{0}^{Q} MC(Q^*) \dif Q^*$$
+
+\subsection*{Samfunnsøkonomisk overskudd}
+Størst når $P = MC$ (fri konkurranse).  $$SO = KO + PO$$
+
+\subsection*{Cournot-duopol og Nash-likevekt}
+To bedrifter produserer med lik MC. Etterspørsel er $P(Q) = A - B \cdot Q$. Ved Nash-likevekt er produksjonsmengden: $$Q_C = Q_1 = Q_2 = \frac{A-MC}{3B}$$
+
+\subsection*{Modigliani og Miller}
+<<Avkastning på egenkapital øker proporsjonalt med gjeldsgrad>>:
+$$r_E = r_A + \frac{D}{E}(r_A-r_D)$$
+der $r_A$ er avkastning på aktiva, $r_D$ er gjeldsrente, $r_E$ er avkastning på egenkapital, $D$ er gjeld, og $E$ er egenkapital. Alternativt:
+$$\beta_E = \beta_A + \frac{D}{E}(\beta_A-\beta_D)$$
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Rentabilitet}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Rentabilitet er avkastningen bedriften får på sin investerte kapital. Kan sammenliknes med renter (<<avkastning>>) på et bankinnskudd (<<investering>>):
+$$\text{rentabilitet} = \textfrac{resultat}{investert kapital}$$
+$$\text{totalkapitalrentabilitet} = \textfrac{resultat + renter}{totalkapital}$$
+$$\text{egenkapitalrentabilitet} = \textfrac{resultat}{egenkapital}$$
+der finanskostnader er delen av inntjeningene som går til långiverne.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Entrepenørskap og innovasjon}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Investeringsrisiki} er teknologi-, markeds, og agentrisiko.
+\paragraph{Diskontinuitetet} er markedsendringer forårsaket av enkelthendelser (<<paradigmeskift>>).
+\paragraph{Kapabiliteter} er kilden til konkurransefortrinn, nært knyttet til kjernekompetanse. Evnen til å tilpasse seg et dynamisk miljø ved å endre interne/eksterne forhold, og til å kombinere ressurser for å få konkurransefortrinn.
+\paragraph{Knowledge push / need pull} er å skape marked for et nytt produkt / å skape et produkt for å fylle et marked.
+\paragraph{Innovasjonsfasene} er \emph{search}, \emph{capture} og \emph{select}.
+\paragraph{Mulighetsanalyse} er en analyse av produkt, marked/bransje, organisasjon og økonomi.
+\paragraph{Kjernerigiditet} er at tidligere suksess forhindrer endring i en organisasjon.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Finansiering}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Venturekapitalfond} eies av privatpersoner som investerer i vekstbedrifter innenfor gitte bransjer eller faser.
+\paragraph{Business angels} er private investorer som kan investere tidlig i oppstartsfasen, og blir aktive medeiere (gir råd og deltar i beslutninger).
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Organisasjon}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Differensiering} er å inndele en organisasjon i oppgaver. Organisasjon $\rightarrow$ Divisjon $\rightarrow$ Funksjon $\rightarrow$ Rolle. Gir økt kontroll og effektivitet.
+\paragraph{Horisontal differensiering} er diff. av divisjoner og funksjoner (gruppering av oppgaver).
+\paragraph{Vertikal differensiering} er diff. av autoritet i et hierarki.
+\paragraph{Balansering} er balansen mellom differensiering og integrering, sentralisering og desentralisering, samt standardisering og gjensidig tilpasning.
+\paragraph{Integrasjonsmekanismer:} Autoritetshierarki, direkte kontakt, koordinatorroller, task forces, team, integrasjonsroller, integrasjonsenheter.
+\paragraph{Sentralisert/desentralisert autoritet} er en ledelse som vil unngå risiko og maksimere kontroll, og vice versa.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Organisasjonsstruktur}
+\paragraph{Organisk struktur} er en løs, uformell og fleksibels struktur. Passer med konstant innovasjonskrav. Komplekse integrasjonsmekanismer, sammenføyet spesialisering, desentralisering og gjensidig tilpasning.
+\paragraph{Mekanisk struktur} er en effektiv og fast struktur. Individuell spesialisering, enkle integrasjonsmekanismer, sentralisering og standardisering.
+\paragraph{Funksjonell struktur} samler folk med liknende roller, kunnskaper og egenskaper. Oppstår ved økt differensiering.
+\paragraph{Divisjonsstruktur} grupperer funksjoner etter spesifikk etterspørsel av produkter, markeder eller kunder.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Produktstruktur}
+\paragraph{Produktdivisjonsstruktur:} Sentraliserte støttefunksjoner som yter service for flere produktlinjer. Kun i én bransje. Økt differensiering.
+\paragraph{Multidivisjonsstruktur:} Hver divisjon har sine støttefunksjoner. I flere bransjer.
+\paragraph{Produktteamstruktur:} En mellomting mellom de to over.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Geografisk struktur}
+Divisjoner organisert etter geografisk betingede behov. Noen sentraliserte, noen desentraliserte.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Markedsstruktur}
+Divisjonsstrukturer kommer av kundegruppe, ikke av produkt.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Matrisestruktur}
+Personer/ressurser grupperes i en matrise etter funksjon og produkt. Flat organisasjonsstruktur, minimalt hierarki, desentralisert autoritet.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Motivasjon}
+\paragraph{Behovsteori} handler om behovene ansatte er motivert for å få oppfylt på jobb.
+\paragraph{Forventningsteori} fokuserer på hvordan ansatte bestemmer hvilken innsats/oppførsel de har.
+\paragraph{Samsvarsteori} antar ansatte ser på eget innsats/resultat-forhold. Ser etter samsvar med andres innsats/resultat.
+\paragraph{Rettferdighetsteori} tar for seg en ansatts opplevelse av rettferd i organisasjonen.
+\paragraph{Indre kontrollplassering} tilsier at man selv kan påvirke hendelser rundt en.
+\paragraph{Ytre kontrollplassering} tilsier at man ikke kan påvirke hendelser rundt en.
+\end{document}
