@@ -1,0 +1,745 @@
+\documentclass[a4paper, 12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{authblk}			% Affiliation in title
+\usepackage{amsmath}			% All kinds of shit
+\usepackage{amssymb}			% Used for blackboard bold face
+\usepackage{algpseudocode}		% For algorithms
+% \usepackage{enumitem}			% Nice lists
+\usepackage{graphicx}			% Images
+\usepackage{float}				% Float placement
+\usepackage{wrapfig}
+\usepackage{commath}			% Differetial operators
+\usepackage[hidelinks]{hyperref}
+% \usepackage{pseudocode}
+\usepackage{algorithmicx}
+
+\usepackage[usenames, dvipsnames]{xcolor}
+\newcommand{\comment}[1]{\textcolor{RedOrange}{#1}}
+
+\usepackage{amsthm}
+\theoremstyle{definition}
+
+% \newcommand{\pder}[2]{\frac{\partial#1}{\partial#2}}
+\newcommand{\pdder}[2]{\frac{\partial^2#1}{\partial#2}}
+% \newcommand{\der}[2]{\frac{\text{d}#1}{\text{d}#2}}
+% \newcommand{\sub}[1]{_{\textnormal{#1}}}
+
+\newcommand{\T}{^{\scriptscriptstyle \text{T}}}
+\newcommand{\lagrange}{\mathcal{L}}
+\newcommand{\hess}{\nabla_{xx}^2}
+\newcommand{\Econ}{\mathcal{E}}
+\newcommand{\Icon}{\mathcal{I}}
+\newcommand{\enforall}{\enspace \forall \enspace}
+
+\title{Summary of\\TTK4135 Optimization and Control}
+\author{Morten Fyhn Amundsen}
+\affil{NTNU}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This document is intended as a summary of the course \emph{TTK4135 Optimization and Control} at NTNU.
+
+\emph{Jeg vil overhode ikke garantere for pdf-ens kvalitet.}
+\subsection{Notation}
+The notation used here is the same as in the textbook \emph{Numerical Optimization}. This means that a lowercase, italic, non-bold character (\(x\)) may represent either a scalar or a vector. Matrices are uppercase, italic, and also non-bold (\(X\)). One slight difference is in transposed matrices: \(X^T\) in the book, but \(X\T\) here. The latter follows IEEE style. `\(^T\)' is stupid.
+\subsection{Todo}
+\begin{itemize}
+	\item Convexity in the general case.
+	\item LU decomposition.
+	\item Section: Unconstrained optimisation.
+	\item Section: Line search methods.
+	\item Section: Quasi-Newton methods.
+	\item Section: Derivative-free optimisation.
+	\item Section: Open-loop dynamic optimisation.
+	\item Section: MPC.
+	\item Section: LQR.
+	\item Section: SQP.
+	\item 15.3 Elimination of variables.
+	\item 15.4 Merit function.
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Optimisation problems}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Nonlinear program (NLP) formulation}
+\begin{equation}\label{eq:general_problem}
+	\begin{aligned}
+		\underset{x \in \mathbb{R}^n}{\min}	& \quad f(x) \\
+		\text{s.t.}	& \quad c_i(x)    = 0, \quad i \in \Econ \\
+					& \quad c_i(x) \geq 0, \quad i \in \Icon \\
+	\end{aligned}
+\end{equation}
+
+\subsection{Requirements for convexity}
+\begin{itemize}
+	\item \(f(x) \) is convex.
+	\item \(c_i(x)    = 0, i \in \Econ\) are linear.
+	\item \(c_i(x) \geq 0, i \in \Icon\) are concave.
+\end{itemize}
+\comment{er de to siste punktene det samme som å si ``the feasible set is convex''? se side 5 av Foss.}
+
+\(f\) is convex if its domain \(S\) is a convex set and if for any two points \( x, y \in S \), the following is satisfied:
+\begin{equation}
+	f(\alpha x + (1-\alpha)y)) \leq \alpha f(x) + (1-\alpha) f(y) \enforall \alpha \in [0,1]
+\end{equation}
+
+\subsection{The feasible set}
+\begin{equation}
+	\Omega = \{x \in \mathbb{R}^n \enskip | \enskip c_i(x) = 0, i \in \Econ \enskip \land \enskip c_i(x) \geq 0, i \in \Icon\}
+\end{equation}
+This is just the set of all \(x\) satisfying all equality and inequality constraints.
+
+\subsection{Global and local solutions}
+A feasible \(x^* \in \Omega\) is a
+\begin{itemize}
+	\item \textbf{global solution} if \(f(x) \geq f(x^*) \enforall x \in \Omega\); \\
+	(I.e. \(f(x)\) is never smaller than \(f(x^*)\). A strictly convex problem has one unique global solution.)
+	\item \textbf{local solution} if \(f(x) \geq f(x^*) \enforall x\) in some area around \(x^*\);\\
+	(I.e. No directions from \(x^*\) decrease \(f(x)\).)
+	\item \textbf{strict local solution} if \(f(x) > f(x^*) \enforall x \neq x^*\) in some area around \(x^*\).\\
+	(I.e. All directions from \(x^*\) increase \(f(x)\).)
+\end{itemize}
+
+\subsection{The Lagrangian function}
+Used on problems with only equality constraints.
+
+At the optimal point \(x^*\), the gradient of the constraint is parallel to the gradient of the objective function: \(\nabla f(x^*) = \lambda_1^* \nabla c_1(x^*)\) for some \(\lambda_1\). This is equivalent to
+\begin{equation}\label{eq:lagr_grad}
+	\nabla_x \lagrange(x^*, \lambda_1^*) = 0
+\end{equation}
+when the Lagrangian function \(\lagrange\) for \eqref{eq:general_problem} is defined as
+\begin{equation}
+	\lagrange (x, \lambda) = f(x) - \sum_{i \in \Econ \cup \Icon} \lambda_i c_i(x).
+\end{equation}
+The point here is that \eqref{eq:lagr_grad} is a necessary condition for an optimal solution. (This can be expanded for problems with several equality constraints, I believe.)
+
+\subsection{KKT conditions}
+If \( x^* \) is a local solution of \eqref{eq:general_problem}, and \( \lambda^* \) is its Lagrange multiplier vector, then the following is satisfied:
+\begin{subequations}
+	\begin{align}
+		\nabla_x \lagrange(x^*, \lambda^*) &= 0                                                \\
+		c_i(x^*)                           &= 0 \enforall i \in \Econ                          \\
+		c_i(x^*)                           &\geq 0 \enforall i \in \Icon                       \\
+		\lambda_i^*                        &\geq 0 \enforall i \in \Icon \label{eq:KKT_lambda} \\
+		\lambda_i^* c_i(x^*)               &= 0 \enforall i \in \Econ \cup \Icon
+	\end{align}
+\end{subequations}
+If the LICQ holds, \( \lambda^* \) is unique.
+
+\subsection{Active set}
+\begin{equation}
+	\mathcal{A}(x) = \Econ \cup \{ i \in \Icon \enspace | \enspace c_i(x) = 0 \}
+\end{equation}
+Or: \(\mathcal{A}\) is the set of all indices of constraints that are active at the point \(x\).
+
+\subsection{LICQ}
+The \emph{linear independence constraint qualification} holds if the set of the gradients of all active constraints \(\{ \nabla c_i(x), i \in \mathcal{A} \}\) is linearly independent. This is necessary at the solution.
+
+\subsection{Linearised feasible direction}
+Given a feasible point \(x \in \mathbb{R}^n\) and the active constraint set \(\mathcal{A}(x)\), the set of linearised feasible directions \(\mathcal{F}(x)\) is
+\begin{equation}
+	\mathcal{F}(x) = \left\{ d \in \mathbb{R}^n \biggr\rvert
+	\begin{array}{l}
+		d\T \nabla c_i(x) = 0 \enforall i \in \Econ \\
+		d\T \nabla c_i(x) \geq 0 \enforall i \in \mathcal{A}(x) \cap \Icon
+	\end{array}
+	\right\}
+\end{equation}
+
+\subsection{The Hessian matrix}
+\begin{equation}
+	\nabla^2 f(x)
+	=
+	\begin{bmatrix}
+	\pdder{f}{x_1^2}  & \pdder{f}{x_1x_2} & \ldots & \pdder{f}{x_1x_n} \\[10pt]
+	\pdder{f}{x_2x_1} & \pdder{f}{x_2^2}  & \ldots & \pdder{f}{x_2x_n} \\
+	\vdots            & \vdots            & \ddots & \vdots            \\[3pt]
+	\pdder{f}{x_nx_1} & \pdder{f}{x_nx_2} & \ldots & \pdder{f}{x_n^2}  \\
+	\end{bmatrix}
+\end{equation}
+
+\subsection{Positive definiteness}
+A matrix \(M\) is positive definite if \(z\T M z > 0 \enforall z \neq 0\).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Linear programming}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Primal/standard LP formulation}
+\begin{equation}\label{eq:lp}
+	\begin{aligned}
+		\underset{x}{\min}	& \quad c\T x \\
+		\text{s.t.}					& \quad A x = b \\
+												& \quad x \geq 0
+	\end{aligned}
+\end{equation}
+
+
+
+\subsection{Slack variables}
+Inequality constraints on the form \(x \leq u\) or \(A x \geq b\) can always be converted to equality constraints by adding slack variables:
+\begin{equation}
+	\begin{aligned}
+		x \leq u		&\Leftrightarrow x + w = u,		&w \geq 0 \\
+		A x \geq b	&\Leftrightarrow A x - y = b,	&y \geq 0
+	\end{aligned}
+\end{equation}
+
+\subsection{Dual LP formulation}
+\begin{equation}
+	\begin{aligned}
+		\underset{\lambda, s}{\max}	& \quad b\T \lambda \\
+		\text{s.t.}                 & \quad A\T \lambda + s = c \\
+                                    & \quad s \geq 0
+	\end{aligned}
+\end{equation}
+The dual LP problem has the same optimal value \(c\T x^* = b\T \lambda^*\) as the primal, and by defining \(s = c - A\T \lambda\), the KKT conditions are identical! (And still sufficient.)
+
+The optimal Lagrange multipliers \(\lambda^*\) in the primal problem are the optimal variables in the dual problem, while the optimal Lagrange multipliers \(x\) in the dual problem are the
+optimal variables in the primal problem. (This is cool.)
+
+
+
+\subsection{Lagrangian function for LP}
+\begin{equation}
+	\lagrange (x, \lambda, s) = c\T x - \lambda\T (A x - b) - s\T x
+\end{equation}
+where \(\lambda \in \mathbb{R}^m\) is the multiplier vector for the constraints \(A x = b\), while \(s \in \mathbb{R}^n\) is the multiplier vector for the constraints \(x > 0\)
+
+
+
+\subsection{KKT conditions for LP}
+\begin{subequations}
+	\begin{align}
+		A\T \lambda^* + s^*	&= c \\
+		A x^*										&= b \\
+		x^*											&\geq 0 \\
+		s^*										&\geq 0 \\
+		x_i^* s_i^*					&= 0, \quad i = 1, 2, \hdots, n \label{eq:KKT_LP_compl}
+	\end{align}
+\end{subequations}
+For an LP, the KKT conditions are \emph{sufficient} conditions for \(x^*\) to be a global solution. \eqref{eq:KKT_LP_compl} states that \(x_i^*\) and/or \(s_i^*\) must be zero for each \(i\). Equivalent: \({x\T}^* s^* = 0\).
+
+
+
+\subsection{Feasible polytope}
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[width=60pt]{politoed}
+	\caption{Feasible Politoed}
+	\end{center}
+\end{figure}
+
+\newtheorem*{feasible-polytope}{Theorem}
+\begin{feasible-polytope}
+	All basic feasible points of a standard LP are vertices of the feasible polytope \(\{ x \enskip | \enskip A x = b, \enskip x \geq 0 \}\).
+\end{feasible-polytope}
+
+\subsection{The Simplex algorithm}
+Iterates between \emph{basic feasible points}. A feasible point \(x\) is basic if there is a subset \(\mathcal{B}\) of the index set \(\{ 1, 2 , \hdots, n \}\) such that
+\begin{itemize}
+	\item \(\mathcal{B}\) contains \(m\) indices.
+	\item \(i \notin \mathcal{B} \implies x_i = 0\)
+	\item The \(m \times m\) matrix \(B = \left[ A_i \right]_{i \in \mathcal{B}}\) is nonsingular (\(A_i\) is the \(i\)th column of \(A\)).
+\end{itemize}
+Then \(\mathcal{B}\) is a \emph{basis} for \eqref{eq:lp}, and \(B\) is the \emph{basis matrix}. The nonbasic set \(\mathcal{N} = \{ 1, 2 , \hdots, n \}\backslash \mathcal{B}\) is the complement of \(\mathcal{B}\), and the nonbasic matrix is \(N = \left[ A_i \right]_{i \in \mathcal{N}}\).
+\paragraph{Features:}
+\begin{itemize}
+	\item Active set method.
+	\item Usually iterates between adjacent vertices.\\
+				(One index in the basis is changed at each iteration.)
+	\item \(c\T x\) will decrease in most iterations.
+	\item Finding a feasible starting point is a significant challenge.
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Quadratic programming}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+A quadratic program (QP) has a quadratic objective function and linear constraints.
+\subsection{Standard formulation}
+\begin{equation}
+	\begin{aligned}
+		\underset{x}{\min}	& \quad \frac{1}{2} x\T G x + c\T x \\
+		\text{s.t.}         & \quad a_i\T x    = b_i, \quad i \in \Econ \\
+                            & \quad a_i\T x \geq b_i, \quad i \in \Icon \\
+	\end{aligned}
+\end{equation}
+
+\subsection{Convexity}
+\begin{itemize}
+	\item \(G > 0 \implies\) \textbf{strictly convex} (e.g. a bowl shape)
+	\item \(G \geq 0 \implies\) \textbf{convex} (e.g. a valley shape)
+\end{itemize}
+
+\subsection{KKT}
+The KKT conditions for a \emph{convex} QP are sufficient conditions, and they define a global solution.
+
+\subsection{Critical cone}
+The \emph{critical cone} is defined as:
+\begin{equation}
+	w \in \mathcal{C}(x^*, \lambda^*) \Leftrightarrow
+	\begin{cases}
+		\nabla c_i(x^*)\T w = 0 \enforall i \in \Econ \\
+		\nabla c_i(x^*)\T w = 0 \enforall i \in \mathcal{A}(x^*) \cap \Icon \text{ with } \lambda_i^* > 0 \\
+		\nabla c_i(x^*)\T w \geq 0 \enforall i \in \mathcal{A}(x^*) \cap \Icon \text{ with } \lambda_i^* = 0 \\
+	\end{cases}
+\end{equation}
+
+\subsection{Second-order sufficient conditions}
+If
+\begin{equation}
+	w\T \hess \lagrange(x^*, \lambda^*) w > 0, \enforall w \in \mathcal{C}(x^*, \lambda^*), \enskip w \neq 0
+\end{equation}
+where \(x^* \in \mathbb{R}^n\) is a feasible point with a Lagrange multiplier \(\lambda^*\) such that the KKT conditions are satisfied, then \(x^*\) is a strict local solution. \comment{What is \(w\)?}
+
+\subsection{Equality constrained QP}
+\begin{equation}
+	\begin{bmatrix} G & -A\T \\ A &  0 \end{bmatrix}
+	\begin{bmatrix} x^* \\ \lambda^* \end{bmatrix}
+	=
+	\begin{bmatrix} -c \\ b \end{bmatrix}
+\end{equation}
+or
+\begin{equation}
+	\underbrace{\begin{bmatrix} G & A\T \\ A &  0 \end{bmatrix}}_K
+	\begin{bmatrix} -p \\ \lambda^* \end{bmatrix}
+	=
+	\begin{bmatrix} g \\ h \end{bmatrix}
+\end{equation}
+where \(p = x^* - x\) and \(K\) is the \emph{KKT matrix}. This has a unique global solution if \(Z\T G Z\) is pos. def. and \(A\) has full rank. \(Z\) is a matrix of full rank, and \(AZ = 0\).
+
+\subsection{Convex inequality constrained QP}
+Solved with the active set method (chapter 16.5).
+
+The Lagrangean is
+\begin{equation}
+	\lagrange(x^*, \lambda^*) = \frac{1}{2} x\T G x + x\T c - \sum_{i \in \Econ \cup \Icon} \lambda_i (a_i\T x - b_i)
+\end{equation}
+and the KKT conditions become
+\begin{subequations}
+	\begin{align}
+		G x^* + c - \sum_{i \in \mathcal{A}(x^*)} \lambda_i^* a_i &= 0                                                  \\
+		a_i\T x^*                                                 &= b_i,  \quad i \in \mathcal{A}(x^*)                 \\
+		a_i\T x^*                                                 &> b_i,  \quad i \in \Icon \setminus \mathcal{A}(x^*) \\
+		\lambda_i^*                                               &\geq 0, \quad i \in \Icon \cap \mathcal{A}(x^*)      \\
+		\lambda_i^* \left( a_i\T x^* - b_i \right)                &= 0,    \quad i \in \Icon
+	\end{align}
+\end{subequations}
+
+The active-set method is outlined as follows:
+\begin{itemize}
+	\item Get direction \(p_k\) from solving an equality-constrained QP.
+	\item Alter the working set \( \mathcal{W}_k \) of active constraints at each iteration.
+	\item Always feasible (require feasible starting point, found by solving a Phase I problem).
+	\item Phase I problem `as hard as' the original problem.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Unconstrained optimisation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+	\underset{x \in \mathbb{R}^n}{\min} \quad f(x) \\
+\end{equation}
+
+\subsection{What is a solution?}
+
+\newtheorem*{1-order-necessary}{Theorem 2.2 (First order necessary conditions)}
+\begin{1-order-necessary}
+	If \( x^* \) is a local minimiser and \(f\) is cont. diff.able in an open area around \( x^* \), then \( \nabla f(x^*) = 0 \).
+\end{1-order-necessary}
+
+\newtheorem*{2-order-necessary}{Theorem 2.3 (Second order necessary conditions)}
+\begin{2-order-necessary}
+	If \( x^* \) is a local minimiser of \(f\) and \( \nabla^2 f \) exists and is cont. in an area around \( x^* \), then \( \nabla f(x^*) = 0 \) and \( \nabla^2 f(x^*)\) is pos. semidef.
+\end{2-order-necessary}
+
+\newtheorem*{2-order-sufficient}{Theorem 2.4 (Second order sufficient conditions)}
+\begin{2-order-sufficient}
+	Suppose that \( \nabla^2 f \) is cont. in an area around \( x^* \) and that \( \nabla f(x^*) = 0 \) and \( \nabla^2 f(x^*) \) is pos. def. Then \( x^* \) is a strict local minimiser of \(f\).
+\end{2-order-sufficient}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Line search methods}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Concept: Choose a new direction and distance to move for each iteration:
+\begin{equation}
+	x_{k+1} = x_k + \alpha_k p_k
+\end{equation}
+
+Usually, the direction must be a descent direction, and it is often on the form
+\begin{equation}
+	p_k = - B_k^{-1} \nabla f_k
+\end{equation}
+where \(B_k\) is symmetric and nonsingular. Three choices are common:
+\begin{itemize}
+	\item Steepest descent: \(B_k = I\)
+	\item Newton's method:  \(B_k = \nabla^2 f(x_k) \)
+	\item Quasi-Newton:     \(B_k \approx \nabla^2 f(x_k) \)
+\end{itemize}
+
+\subsection{Step length}
+We want an \( \alpha_k \) that gives a good reduction of \(f\) without too much computation. The best choice is of course the length that gives the greatest possible reduction of \(f\) when moving in the chosen direction, i.e. the \emph{global} minimiser of
+\begin{equation}
+	\phi (\alpha) = f(x_k + \alpha p_k)
+	,
+\end{equation}
+but that is hard to compute.
+
+\subsubsection{Wolfe conditions}
+The Wolfe conditions are requirements that try to assure a good choice of step length.
+\begin{subequations}\label{eq:wolfe}
+	\begin{align}
+		f(x_k + \alpha_k p_k)              &\leq f(x_k) + c_1 \alpha_k \nabla f_k\T p_k \label{eq:wolfe_decrease} \\
+		\nabla f(x_k + \alpha_k p_k)\T p_k &\geq c_2 \nabla f_k\T p_k                   \label{eq:wolfe_curvature}
+	\end{align}
+\end{subequations}
+with \( 0 < c_1 < c_2 < 1 \).
+\begin{itemize}
+	\item \eqref{eq:wolfe_decrease} is the \emph{sufficient decrease condition}. It assures a certain decrease of \(f\), proportional to the step length. (\(c_1\) is often small, i.e. \( 10^{-4} \).)
+	\item \eqref{eq:wolfe_curvature} is the \emph{curvature condition}. It makes sure that you keep going (longer step length) if \(f\) goes steeply downhill. If \(f\) is steep, it's better to move further. (\(c_2\) is typically \(0.9\) for Newton and Quasi-Newton methods.)
+\end{itemize}
+
+\subsubsection{Sufficient decrease and backtracking}
+The curvature condition is used because the sufficient decrease condition alone may not assure a good choice of step length. The \emph{backtracking} approach allows us to tell \eqref{eq:wolfe_curvature} to fuck right off.
+
+\begin{algorithmic}
+	\State Choose \( \bar{\alpha} > 0, \rho \in (0, 1), c \in (0, 1) \).
+	\State \( \alpha \gets \bar{\alpha} \)
+	\Repeat
+		\State \( \alpha \gets \rho \alpha \)
+	\Until{\( f(x_k + \alpha p_k) \leq f(x_k) + c \alpha \nabla f_k\T p_k \)}
+	\State Terminate with \( \alpha_k = \alpha \).
+\end{algorithmic}
+
+\subsection{Newton's method with Hessian modification}
+Chapter 3.4. Syllabus: First two pages until Section \emph{Eigenvalue Modification}.
+
+\subsection{Step-length selection algorithms}
+Chapter 3.5. Syllabus: Down to Section \emph{A Line Search Algorithm for the Wolfe Conditions}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Newton and Quasi-Newton methods}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Solves unconstrained, nonlinear optimisation problems iteratively:
+\begin{equation}
+	x_{k+1} = x_k + \alpha_k p_k
+\end{equation}
+
+\subsection{Newton's method}
+(Notation: \( g_k = \nabla f(x_k) \) and \( H_k = \nabla^2 f(x_k) \).)
+
+The second-order Taylor expansion of the objective function near \(x_k\) is
+\begin{equation}\label{eq:taylor_newton}
+	f(x_k + \Delta x) \approx f(x_k) + \Delta x\T g_k + \frac{1}{2} \Delta x\T H_k \Delta x
+	.
+\end{equation}
+The derivative of \eqref{eq:taylor_newton} is
+\begin{equation}\label{eq:newton_derivative}
+	\pd{f(x_k + \Delta x)}{\Delta x} = g_k + H_k \Delta x
+\end{equation}
+which is zero for \( \Delta x \) that are global minima of \( f(x_k + \Delta x) \). Solving for \( \Delta x \) gives
+\begin{equation}
+	\Delta x = - H_k^{-1} g_k
+\end{equation}
+This suggests that we should move \(x_k\) towards \( H_k^{-1} g_k \). In practice, we use
+\begin{equation}
+	x_{k+1} = x_k - \alpha H_k^{-1} g_k
+\end{equation}
+and find \(\alpha\) with some line search method.
+
+There is a huge drawback: Computing the Hessian takes forever in large systems.
+
+\subsection{BFGS Quasi-Newton method}
+Start at an initial position \(x_0\) and the inverse of an approximated and pos. def. Hessian \(H_0\). Repeat until \(x_k\) converges to the solution:
+\begin{enumerate}
+	\item Compute search direction:
+		\begin{equation}
+			p_k = - H_k \nabla f(x_k)
+		\end{equation}
+	\item Find a step length \( \alpha_k \) with some line search method, so that it satisfies the Wolfe conditions \eqref{eq:wolfe}.
+	\item Update position:
+		\begin{equation}
+			x_{k+1} = x_k + \alpha_k p_k
+		\end{equation}
+	\item Define \(s_k\) as the distance moved:
+		\begin{equation}
+			s_k = x_{k+1} - x_k = \alpha_k p_k
+		\end{equation}
+	\item Define \(y_k\) as the change in the gradient:
+		\begin{equation}
+			y_k = \nabla f(x_{k+1}) - \nabla f(x_k)
+		\end{equation}
+	\item
+		Approximate next Hessian inverse (always pos. def.):
+		\begin{equation}
+			H_{k+1} = \left( I - \rho_k s_k y_k\T \right) H_k \left( I - \rho_k y_k s_k\T \right) + \rho_k s_k s_k\T
+		\end{equation}
+		where \( \rho_k = \left( y_k\T s_k \right)^{-1} \).
+\end{enumerate}
+Another, slower version exists that works on the (not inverse) Hessian approximation \(B_k\), using the update formula
+\begin{equation}
+	B_{k+1} = B_k + \frac{y_k y_k\T}{y_k\T s_k} - \frac{B_k s_k s_k\T B_k}{s_k\T B_k s_k}
+	.
+\end{equation}
+
+Alternatives to BFGS are SR1 and DFP.
+
+The update formulas are derived from
+\begin{equation}
+	\begin{aligned}
+		\underset{H}{\min}	& \quad || H - H_k || \\
+		\text{s.t.}	        & \quad H = H\T       \\
+                            & \quad H y_k = s_k.
+	\end{aligned}
+\end{equation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Approximating derivatives}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Finite difference derivative approximation}
+The \emph{one-sided difference} approximation is
+\begin{equation}
+	\pd{f(x)}{x_i} \approx \frac{f(x + \epsilon e_i) - f(x)}{\epsilon}
+\end{equation}
+where \(\epsilon\) is a small, positive number and \(e_i\) is a unit vector. This is quick but not very accurate.
+
+The \emph{central-difference} formula is
+\begin{equation}
+	\pd{f(x)}{x_i} \approx \frac{f(x + \epsilon e_i) - f(x - \epsilon e_i)}{2 \epsilon}
+	.
+\end{equation}
+This one is roughly twice as expensive to calculate, but also more precise.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Derivative-free optimisation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Sometimes we cannot calculate or approximate the derivative, so some guys made methods that do not require any differentiation.
+
+\subsection{Finite differences and noise}
+Fuck this.
+
+\subsection{Nelder-Mead method}
+(First of all: No relation to the Simplex method.)
+
+Keeps track of a \emph{simplex} \(S\) with \(n+1\) points in \(n\) dimensions (e.g. a triangle on a plane). For each iteration, it removes a bad vertex (large objective value) and finds a better vertex to replace it.
+
+The simplest version replaces the worst vertex with a point reflected through the centroid of the remaining points. If the new point is better than the best current point, we can try moving even further. If it is not much better than the previous, we can try to move shorter (shrinking the simplex).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Open loop dynamic optimization}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+A quadratic objective function is often used for various problems. The objective function
+\begin{equation}
+	{f(z)}
+	=
+	\sum_{t=0}^{N-1}
+		\frac{1}{2} x_{t+1}\T Q_{t+1} x_{t+1}
+		+
+		d_{xt+1} x_{t+1}
+		+
+		\frac{1}{2} u_t\T R_t u_t
+		+
+		d_{ut} u_t
+\end{equation}
+leads to the QP problem in \eqref{eq:open-loop-qp} below:
+\begin{subequations}\label{eq:open-loop-qp}
+\begin{align}
+	\underset
+		{z \in \mathbb{R}^n}
+		{\min}
+	&\quad
+	f(z) \\
+	\intertext{subject to}
+	x_0, u_{-1}             &\quad \text{ given}                                           \\
+	x_{t+1}                 &= A_t x_t + B_t u_t                                           \\
+	x^{\text{low}}          &\leq x_t \leq x^{\text{high}}                                 \\
+	u^{\text{low}}          &\leq u_t \leq u^{\text{high}}                                 \\
+	-\Delta u^{\text{high}} &\leq \Delta u_t \leq \Delta u^{\text{high}}                   \\
+	Q_t                     &\geq 0                                                        \\
+	R_t                     &\geq 0                                                        \\
+	\intertext{where}
+	\Delta u_t              &= u_t - u_{t-1}                                               \\
+	z\T                     &= \left( x_1\T, \dots, x_N\T, u_0\T, \dots, u_{N-1}\T \right) \\
+	n                       &= N (n_x + n_u)
+\end{align}
+\end{subequations}
+This is an open-loop optimisation problem because there is no feedback present in the solution. We use only the initial state when solving over the event horizon.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Model predictive control}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{General idea:} At each sample time, solve a bladi bladi bla.
+
+Can enforce hard bounds on input and output values (which is pretty useful).
+
+\subsection{General formulation}
+
+\subsection{Linear MPC}
+\begin{equation}
+	f(z)
+	=
+	\sum_{t=0}^{N-1}
+		\frac{1}{2} x_{t+1}\T Q_{t+1} x_{t+1}
+		+
+		\frac{1}{2} u_t\T R_t u_t
+		+
+		\frac{1}{2} \Delta u_t\T R_{\Delta t} \Delta u_t
+		+
+		d_{xt+1} x_{t+1}
+		+
+		d_{ut} u_t
+\end{equation}
+Here the term \( \frac{1}{2} \Delta u_t\T R_{\Delta t} \Delta u_t \) is added to penalise control action. This reduces wear on actuators. Otherwise the objective is the same as \eqref{eq:open-loop-qp}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Linear quadratic control}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+No bounds on input/output!
+
+\subsection{Finite horizon}
+\begin{subequations}
+\begin{align}
+	\underset
+		{z \in \mathbb{R}^n}
+		{\min}
+	\quad
+	f(z)
+	&=
+	\sum_{t=0}^{N-1}
+		\frac{1}{2} x_{t+1}\T Q_{t+1} x_{t+1}
+		+
+		\frac{1}{2} u_t\T R_t u_t
+	\intertext{subject to}
+	x_{t+1} &= A_t x_t + B_t u_t                                           \\
+	x_0     &= \text{given}                                                \\
+	\intertext{where}
+	z\T     &= \left( x_1\T, \dots, x_N\T, u_0\T, \dots, u_{N-1}\T \right) \\
+	n       &= N (n_x + n_u)
+\end{align}
+\end{subequations}
+
+\subsection{Infinite horizon}
+\begin{equation}\label{eq:lqr-infinite-horizon}
+	\underset
+		{z \in \mathbb{R}^n}
+		{f^\infty(z)}
+	=
+	\sum_{t=0}^{\infty}
+		\frac{1}{2} x_{t+1}\T Q_{t+1} x_{t+1}
+		+
+		\frac{1}{2} u_t\T R_t u_t
+\end{equation}
+
+\subsubsection{State feedback}
+\eqref{eq:lqr-infinite-horizon} is defined by
+\begin{align}\label{eq:lqr-state-feedback}
+	x_{t+1} &= A x_t + B u_t \\
+	x_0     &= \text{given}  \\
+	Q       &\geq 0 \\
+	R       &>    0
+\end{align}
+and its solution is
+\begin{equation}
+	u_t = - K x_t
+\end{equation}
+where
+\begin{align}
+	K &= R^{-1} B\T P \left( I + B R^{-1} B\T P \right)^{-1} A \\
+	P &= Q + A\T P \left( I + B R^{-1} B\T P \right)^{-1} A    \\
+	P &= P\T \geq 0
+	.
+\end{align}
+
+The closed-loop system \eqref{eq:lqr-infinite-horizon}--\eqref{eq:lqr-state-feedback} is stable if \( (A, B) \) is stabilisable\footnote{All uncontrollable modes are asymptotically stable.}, and \( (A, D) \) is detectable\footnote{All unobservable modes are asymptotically stable.}, where \( Q = D\T D \).
+
+\subsubsection{Linear-quadratic-Gaussian control}
+A combination of an LQR and a Kalman filter. Usually necessary in practice, as we cannot measure all states directly.
+\begin{align}
+	\xi_{t+1} &=
+		\begin{bmatrix}
+			x_{t+1} \\
+			\widetilde{x}_{t+1}
+		\end{bmatrix}
+		=
+		\begin{bmatrix}
+			A - B K & B K \\
+			0       & A - K_F C
+		\end{bmatrix}
+		\xi_t
+		\\
+	\widetilde{x}_t &= x_t - \hat{x}_t \\
+	\xi_0 &= \text{given}
+\end{align}
+where \( \xi \) (xi) is the augmented state, i.e. the true states combined with the estimated states, \(K\) is the controller gain, and \(K_F\) is the Kalman gain.
+
+Luckily, the controller and the filter are separated: They can be tuned independently.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Sequential quadratic programming}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Used for nonlinearly constrained optimisation. 
+
+\subsection{Equality-constrained NLP}
+\begin{subequations}
+	\begin{align}
+		\min        & \quad f(x) \\
+		\text{s.t.} & \quad c(x) = 0
+	\end{align}
+\end{subequations}
+A QP approximation is solved at each iteration to compute direction \(p_k\):
+\begin{subequations}
+	\begin{align}
+		\underset
+			{p}
+			{\min}
+		& \quad
+		f_k + \nabla f_k\T p + \frac{1}{2} p\T \nabla_{xx}^2 \lagrange_k p \\
+		\text{s.t.}
+		& \quad A_k p + c_k = 0
+	\end{align}
+\end{subequations}
+
+\subsection{Inequality-constrained NLP}
+\begin{subequations}
+	\begin{align}
+		\min        & \quad f(x) \\
+		\text{s.t.} & \quad c_i(x) = 0,    \quad i \in \Econ \\
+		            & \quad c_i(x) \geq 0, \quad i \in \Icon
+	\end{align}
+\end{subequations}
+QP approximation:
+\begin{subequations}
+	\begin{align}
+		\underset{p}{\min}
+			& \quad
+				f_k + \nabla f_k\T p + \frac{1}{2} p\T \nabla_{xx}^2 \lagrange_k p \\
+		\text{s.t.}
+			& \quad
+				\nabla c_i (x_k)\T p + c_i (x_k) =    0, \quad i \in \Econ \\
+			& \quad
+				\nabla c_i (x_k)\T p + c_i (x_k) \geq 0, \quad i \in \Icon
+	\end{align}
+\end{subequations}
+
+\subsection{Merit functions}
+Used for backtracking line search (finding a step length \(\alpha\)). Must evaluate both the decrease in \(f(x)\) and constraint violation.
+
+Most common: \(l_1\)-penalty function:
+\begin{equation}
+	\phi_1 (x; \mu) = f(x) + \mu \sum_{i \in \Econ} |c_i(x)| + \mu \sum_{i \in \Icon} \left[ c_i(x) \right]^-
+\end{equation}
+where
+\begin{equation}
+	\left[ c_i(x) \right]^- := \max(0, -c_i(x))
+	.
+\end{equation}
+
+\paragraph{Exactness:} A merit function is \emph{exact} if for all \(\mu\) above some threshold, any local solution of the NLP is a local minimiser of the merit function.
+
+\end{document}
