@@ -4,11 +4,8 @@ This repository contains more or less brief summaries of courses I've taken at N
 
 ## How to contribute
 
-If you know something about the courses listed and want to add to the documents, simply create a pull request with your changes and additions. I have some simple guidelines:
+If you want to add something, just create a pull request with your stuff. I have some guidelines:
 
-* Always keep these in the preamble:
-    * `\usepackage{libertine}`
-    * `\usepackage[libertine]{newtxmath}`
-* Use feature branches for larger contributions
+* Use branches where they make sense
 * Write good commits
-* Write tidy and understandable code
+* Write good source
