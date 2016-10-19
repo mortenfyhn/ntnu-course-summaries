@@ -1,0 +1,69 @@
+%!TEX root = ../TTK26-Summary.tex
+\section{Muscle modeling}
+The main purpose of a mathematical model is
+\begin{itemize}
+    \item \emph{comprehension}, the ability to aid in understanding the system, and
+    \item \emph{prediction}, the ability to predict dynamics outside of experimental boundaries.
+\end{itemize}
+Further, a good model should have
+\begin{itemize}
+    \item \emph{credibility}, that it predicts well, and
+    \item \emph{tractability}, that it is simple.
+\end{itemize}
+In a way, these oppose each other: A very precise model is often also very complex. It is necessary to balance these qualities.
+
+\subsection{Types of muscle models}
+Divided first by the level they represent:
+\begin{enumerate}
+    \item Microscopic (crossbridge/sarcomere) models
+        \begin{enumerate}
+            \item Conventional cross-bridge models (introduced by Huxley)
+            \item Unconventional cross-bridge models (based on different postulates than Huxley's)
+        \end{enumerate}
+    \item Macroscopic (whole muscle) models
+        \begin{enumerate}
+            \item Viscoelastic models (consider muscle as viscoelastic material)
+            \item Hill-type models (based on Hill, 1938)
+            \item Black box models (use system identification methods)
+        \end{enumerate}
+    \item Fiber models
+\end{enumerate}
+
+\subsection{Conventional microscopic models}
+Introduced by Huxley, 1957 and improved upon since. Assumes all sarcomeres identical, and macroscopic properties can be calculated through integrals on $n(x,t)$, where $n$ is ...
+
+Huxley's model was extended by hill with more states of the ...
+
+\subsection{Unconventional microscopic models}
+Founded on different assumptions.
+\paragraph{Bornhorst \& Minardi} Modeling each cross-bridge as linear energy converters.
+\paragraph{Iwazumi} No direct binding between myosine and actin, ATP causes hydrolysis.
+\paragraph{Tirosh} Hydrodynamic model
+\paragraph{Hatze} Assume elastisity in Z-disks and M-lines rather than in the cross-bridges.
+
+\subsection{Macroscopic models}
+\paragraph{Viscoelastic} Assume muscle is viscoelastic material. Can be represented by a spring-damper in series with an undamped spring.
+\paragraph{Hill-type} Improvement upon viscoelastic. Most used model for dynamic analysis and control.  Consists of a series elastic element, a contractile element, and a parallel elastic element. Made to model contraction under max stimuli over short contraction distances. Has been further developed in many directions.
+\begin{equation}
+    \dot{L} = C(P) \dot(P) - F(P, P_0)
+\end{equation}
+
+\subsection{Black box models}
+Based on statistics: Do a bunch of experiments, and fit a model to the data. Many model types can be used
+\begin{itemize}
+    \item LTI SISO
+    \item etc...
+\end{itemize}
+Simplest form is an LTI SISO system
+\begin{equation}
+    y(t) = \int G(t-\tau) \dot{x}(\tau) \dif \tau
+\end{equation}
+Time delay $\tau$ represents phase delay at high frequencies and is sometimes simplified away.
+
+Can also write a 2I1O-model: Muscle force a function of length and activation.
+
+\subsection{Fiber models}
+Fibres are assumed non-uniform, as opposed to other models.
+
+\subsection{Distribution-moment models}
+Represents the bond restriction function $n(x,t)$ from Huxley model as a Gaussian probability distribution dependent on stiffness, force, and elastic energy.

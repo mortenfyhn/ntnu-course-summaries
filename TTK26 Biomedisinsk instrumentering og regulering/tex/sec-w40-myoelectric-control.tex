@@ -1,0 +1,62 @@
+%!TEX root = ../TTK26-Summary.tex
+\section{Myoelectric control}
+About how the MES is acquired, processed, and used for control of upper limb prostheses. Control systems are usually either off/on or proportional controllers for speed control.
+
+\subsection{Variation of the MES with contraction level}
+Surface electrodes cannot very well discern activation of individual motor units, but the variance of the noise-like signal they read is related to the contraction level of the muscle.
+
+\subsection{Acquiring the MES}
+The signal picked up must be amplified: Capacitive coupling between the human and 50/60 Hz power lines gives a common mode voltage component to electrodes on the skin. The common mode voltage is rejected with a differential amplifier (Figure \ref{fig:diff-amp}), while the voltage difference is amplified. Sometimes a notch filter is used to attempt further removal of the common mode signal.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=.5\linewidth]{img/op-amp}
+    \caption{A differential amplifier}
+    \label{fig:diff-amp}
+\end{figure}
+
+\subsection{Motion artifact}
+If the electrodes move relative the skin, the skin under them is stretched, or they are lifted, the output signal is corrupted. The extra noise can be confused with the true MES. For real-life use, the only way to avoid this is to make sure the electrodes stay put in the prosthesis, i.e. the prosthesis must fit very well.
+
+\subsection{Processing the MES}
+The MES is roughly zero-mean noise, but variance is related to contraction. A square law device is seemingly optimal in the sense of minimizing error. To lower power consumption, a full wave rectifier is usually used to the same effect. The rectified signal is low pass filtered to give a smooth curve. The result is a processed myoelectric signal (PMES).
+
+\subsection{Two-site control of prosthetic function}
+Two-site control uses two separate muscle groups to control the prosthesis. Usually antagonistic muscles, because it feels more intuitive and therefore shortens learning time.
+
+A small signal can be picked up when the muscles are resting. This signal must be removed/ignored. That can be done by a simple threshold. With a two-site system, you must address the issue of co-contraction. Usually the first muscle to activate is prioritized, and signals from the other muscle are ignored until the first is relaxed.
+
+\subsection{Controlling the speed of the terminal device}
+With proportional control, the speed of actuation is proportional to level of the PMES. Especially useful for large joints (e.g. elbow) that need fast coarse motion as well as slow fine motion. An alternative method is to move the joint proportional to the difference of the PMES at each of the two sites. Furthermore, the co-contraction signal has been used as a ``switch'' to change operation mode.
+
+Because lowering speed by means of lowering the motor voltage also lowers the torque, prostheses usually lower the speed with PWM, running at nominal voltage.
+
+Spacing between electrodes affect the signal. Wide spacing gives more smearing and loss of high-frequecy information. Narrow spacing gives a better signal representation.
+
+\subsection{Multi-function control strategies}
+Multi-function control strategies control the elbow and hand with the same myoelectric system. An example is a system as described above combined with switches and harnesses (for body-powered control).
+
+%%%%% Merletti & Parker 2004, ch. 18
+% Viktig: Figur 18.1 og 18.2. Forstå (8), s. 457.
+\subsection{Single myoelectric channel model}
+The MES $M(t)$ can be written as a sum of individual muscle signals $m_i(t)$:
+\begin{equation}
+\begin{split}
+    M(t) &= \sum_{i=1}^{m} m_i(t) \\
+         &= \sum_{i=1}^{m} U(t,\lambda_i,p_i) P(t,r_i)
+\end{split}
+\end{equation}
+where
+\begin{itemize}
+    \item $U(t,\lambda_i,p_i)$ is the pooled innervation point process with firing rate $\lambda_i$ and pattern $p_i$,
+    \item $P(t,r_i)$ is the average motor unit action potential seen at an electrode with distance $r_i$.
+\end{itemize}
+The firing rate, or recruitment, $\lambda_i$ is controlled voluntarily. $\sigma_i^2$ is the variance of $m_i$. $\sigma_m^2$ is the variance of $M(t)$. By the relationship
+\begin{equation}
+    \sigma_m^2 = \sum_{i=1}^{m} k_i \lambda_i
+\end{equation}
+we see that we have also voluntary control of the variance. For time-varying $\lambda_i$, the relation is
+\begin{equation}
+    \sigma_m^2(t) \approx \sum_{i=1}^{m} k_i \lambda_i(t).
+\end{equation}
+So we can voluntarily control a signal $\sigma_m^2(t)$ which can be acquired by electrodes and used for prosthesis control. $\sigma_m^2(t)$ is the variance of the detected MES, and it is roughly a weighted sum of recruitment parameters $\lambda_i(t)$, which are controlled by muscle contraction.
