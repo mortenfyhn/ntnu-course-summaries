@@ -1,0 +1,18 @@
+%!TEX root = ../TTK18-Summary.tex
+\section{Linear matrix inequalities}
+Many problems in systems and control can be reduced to optimization problems involving LMIs, for which there exist efficient numerical solvers.
+
+A strict LMI has the form
+\begin{equation}
+    F(x) \triangleq F_0 + \sum_{i=1}^m x_i F_i > 0
+\end{equation}
+where $x \in \mathbb{R}^m$ is the variable, and $F_i = F_i^T \in \mathbb{R}^{n \times n}$, $i = 0, \dots, m$. Multiple LMIs can be rewritten as a single LMI by stacking each matrix on the diagonal:
+\begin{equation}
+    \diag \left( F^{(1)}(x), \dots, F^{(p)}(x) \right) > 0
+\end{equation}
+
+% \subsection{Some mathematical background}
+% A square matrix $W$ can be decomposed into a symmetric and a skew-symmetric part:
+% \begin{equation}
+%     W = \left( \frac{W + W^T}{2} \right) + \left( \frac{W - W^T}{2} \right)
+% \end{equation}
