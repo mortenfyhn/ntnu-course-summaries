@@ -1,4 +1,4 @@
-\documentclass[a4paper]{article}
+\documentclass[a4paper,12pt]{article}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -7,8 +7,11 @@
 \usepackage{microtype}
 \usepackage{amsmath}
 
+\setcounter{tocdepth}{1}
+
 \newcommand*{\sub}[1]{_\mathrm{#1}}
 \DeclareMathOperator{\diag}{diag}
+\newcommand*{\transp}{^{T}}
 
 \title{Summary of TTK18}
 \date{\today}
@@ -17,10 +20,10 @@
 \begin{document}
 
 \maketitle
-\tableofcontents
+% \tableofcontents
 
-\input{tex/sec-bilevel}
-\input{tex/sec-linear-matrix-inequalities}
-\input{tex/sec-linear-matrix-inequalities-for-piecewise-affine-systems}
+% \input{tex/sec-bilevel}
+% \input{tex/sec-linear-matrix-inequalities}
+\input{tex/sec-lmis-for-pwa-systems.tex}
 
 \end{document}

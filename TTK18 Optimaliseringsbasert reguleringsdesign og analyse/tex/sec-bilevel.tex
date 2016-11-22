@@ -1,7 +1,8 @@
 %!TEX root = ../TTK18-Summary.tex
 \section{Bi-level programming in constrained control}
-Def: Opt prob depending on solution of another opt prob. Called ``upper level'' (UL) and ``lower level'' (LL) problems.
-\begin{equation}
+A bi-level program is an optimization problem that depends on the solution of another optimization problem, called ``upper level'' (UL) and ``lower level'' (LL) problems, respectively.
+%
+\begin{equation}\label{eq:bilevel-general}
 \begin{split}
     \min_x f\sub{UL}(x,z) \\
     G\sub{UI}(x,z) \leq 0 \\
@@ -12,19 +13,30 @@ Def: Opt prob depending on solution of another opt prob. Called ``upper level'' 
 \end{split}
 \end{equation}
 
-Usually assume LL convex and regular. Linear constraints, linear/quadratic objective functions.
-
-KKT for LL:
+\subsection{Restricting problem classes}
+The formulation \eqref{eq:bilevel-general} is very general. Must restrict the problem in order to solve efficiently:
+%
+\begin{itemize}
+    \item Assume LL problem is convex and regular.
+    \item Assume linear constraints.
+    \item Assume Linear or quadratic objective functions.
+\end{itemize}
+%
+Then we can replace the LL problem with its KKT conditions. The Lagrangian function is
+%
 \begin{equation}
     \mathcal{L}(x,z,\lambda,\mu) = f\sub{LL}(x,z) + \lambda^T G\sub{LI}(x,z) + \mu^T G\sub{LE}(x,z)
 \end{equation}
+%
+and the KKT conditions are
+%
 \begin{equation}
 \begin{split}
     \nabla_z \mathcal{L}(x,z,\lambda,\mu) = 0 \\
     G\sub{LI}(x,z) \leq 0 \\
     G\sub{LE}(x,z) = 0 \\
     \lambda \geq 0 \\
-    \lambda \times G\sub{LI}(x,z) = 0
+    \lambda \cdot G\sub{LI}(x,z) = 0
 \end{split}
 \end{equation}
 
@@ -38,11 +50,11 @@ The overall problem is then
     G\sub{LI}(x,z) &\leq 0 \\
     G\sub{LE}(x,z) &= 0 \\
     \lambda &\geq 0 \\
-    \lambda \times G\sub{LI}(x,z) &= 0
+    \lambda \times G\sub{LI}(x,z) &= 0,
 \end{split}
 \end{equation}
-
-Small problems can be solved with e.g. YALMIP with the standard UL/LL formulation.
+%
+which is solvable for smaller problems, using e.g. YALMIP.
 
 \subsection{Big-M notation}
 Big-M formulation replaces nonlinear complementarity constraints with linear constraints using binary variables $s \in \{0,1\}$ to indicate activeness for inequality constraints:
@@ -59,7 +71,7 @@ This notation fulfills the complementarity constraints, and given large enough $
 The overall problem formulation becomes
 \begin{equation}
 \begin{split}
-    \min_{x,z,\lambda,\mu} f\sub{UL}(x,z) \\
+    \min_{x,z,\lambda,\mu,s} f\sub{UL}(x,z) \\
     G\sub{UI}(x,z) & \leq 0 \\
     G\sub{UE}(x,z) &= 0 \\
     \nabla_z \mathcal{L}(x,z,\lambda,\mu) &= 0 \\
@@ -72,9 +84,26 @@ The overall problem formulation becomes
 \end{split}
 \end{equation}
 
-Linear $f\sub{ul}$ gives MILP, quadratic $f\sub{ul}$ gives MIQP. Nonconvex, $np$-hard, but efficient software exists. Three methods make the problem easier:
-\begin{itemize}
-    \item Using \emph{branch and bound} to remove known symmetries. (Correct?)
-    \item Restrict some combinations of binary variables.
-    \item Prefer small $M^u$ and $M^\lambda$. Necessary for numerical solution, which is all we have anyway. The $M$s are diagonal matrices, so each constraint can be ``weighted''. $M^\lambda$ most difficult. $M^u$ can be found by solving an LP. May need trial and error for $M^\lambda$, and it should never constrain $\lambda$.
-\end{itemize}
+Linear $f\sub{UL}$ gives a MILP\footnote{Mixed integer linear program.}, quadratic $f\sub{UL}$ gives a MIQP\footnote{Mixed integer quadratic program.}. Nonconvex, $np$-hard, but efficient software exists.
+
+\subsection{Solving MILP/MIQP}
+Some steps can be taken to make MILP/MIQPs easier to solve.
+
+\subsubsection{Branch-and-bound}
+A branch-and-bound solver partitions the search space into regions, and finds an upper bound $UB$ and lower bound $LB$ for the solution in each region. If
+\begin{equation}
+    LB_i > UB_j
+\end{equation}
+then we know the solution is not in $i$, and we discard that region.
+
+You can also remove known symmetries from symmetric problems by adding extra constraints to make only one of the symmetric solutions feasible.
+
+\subsubsection{Restrict combinations of binary variables}
+The binary variables indicate which constraints are active, and some combinations of active constraints are known to be impossible. Linear constraints on the binary variables can remove these combinations from the search space.
+
+\subsubsection{Use small $M^u$/$M^\lambda$}
+For a correct analytical solution, $M^u$ and $M^\lambda$ must be sufficiently large. However, setting them too large gives numerical issues and an inaccurate solution. Choosing them is simpler by setting them diagonal and positive.
+
+A good $M^u$ can sometimes be found by solving a series of LPs, if the LL constraints are bounded.
+
+$M^\lambda$ may need trial-and-error: If a value of $\lambda$ is constrained by $M^\lambda$, retry after increasing the corresponding element of $M^\lambda$.
