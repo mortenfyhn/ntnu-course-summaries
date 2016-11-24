@@ -1,0 +1,37 @@
+%!TEX root = ../TTK26-Summary.tex
+\section{Electrical safety}
+
+\subsection{Physiological effects of electricity}
+Three things happen when current flows through a guy:
+\begin{itemize}
+    \item Stimulation of nerves and muscles,
+    \item resistive heating,
+    \item burns and tissue damage for high current/voltage.
+\end{itemize}
+
+Various current levels cause different phenomena. For a human with wet hands holding a copper wire in each hand, the typical levels are:
+\begin{itemize}
+    \item 0.5 mA (60 Hz AC) and 2--10 mA (DC): Typical threshold of perception.
+    \item 6 mA: Minimum threshold for \emph{let-go current}, i.e. the max. current at which you can voluntarily withdraw.
+    \item 18--22 mA: Respiratory arrest has been observed, due to involuntary contraction of respiratory muscles.
+    \item 75--400 mA: Ventricular fibrillation (VF), i.e. partial depolarization of the heart leading to irregular cardiac rhythm. Must apply a short high-current pulse to depolarize all cells, which usually causes return to normal function. If not treated, the subject dies.
+    \item 1--6 A: Sustained myocardial contraction, contraction of the whole heart.
+    \item $>10$ A: Burns and physical injury. The brain and nervous tissue loses excitability when this happens.
+\end{itemize}
+
+The true values differ for men and women, and depending on AC frequency. Men have higher thresholds, and the thresholds are lower for frequencies significantly lower or higher than 50 Hz.
+
+\subsection{Micro- and macroshocks}
+A \emph{macroshock} is a large, externally applied shock, during which only a fraction of the current flows through the heart. The high resistance of the skin reduces the danger of macroshocks, but wet skin or gelled electrodes reduce skin resistance dramatically.
+
+\emph{Microshocks} are small shocks applied directly to the heart, such as current flowing from a catheter in the heart and out through an extremity. They can easily cause VF. \SI{10}{\micro\ampere} is an accepted safety limit to avoid microshocks.
+
+\subsection{Distribution of electricity}
+The 2006 NEC standard specifies limits for potential differences between exposed conductive surfaces near patiens:
+\begin{enumerate}
+    \item Max. 500 mV in general-care areas.
+    \item Max. 40 mV in critical-care areas (all relevant surfaces must be grounded at a common point).
+\end{enumerate}
+
+\subsubsection{Isolated-power systems}
+A ground fault is a short circuit between a live wire and ground, giving a very large current to ground.
