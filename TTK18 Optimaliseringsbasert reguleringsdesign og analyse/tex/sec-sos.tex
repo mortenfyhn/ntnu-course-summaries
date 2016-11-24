@@ -1,0 +1,273 @@
+%!TEX root = ../TTK18-Summary.tex
+\section{Sum of squares programming}
+SoS decomposition can prove non-negativity of polynomials, and can be used for control analysis and design for polynomial nonlinear systems.
+
+\subsection{Polynomials and monomials}
+A (multivariate) polynomial is
+%
+\begin{equation}
+  f(x) = \sum_k c_k x_1^{a_{k1}} \dots x_n^{a_{kn}},\quad a_{ki} \in \mathbb{Z},
+\end{equation}
+%
+and a monomial is one term in a polynomial, without the coefficient:
+%
+\begin{equation}
+  m_k(x) = x_1^{a_{k1}} \dots x_n^{a_{kn}}.
+\end{equation}
+
+\subsection{Sum of squares decomposition}
+A \emph{polynomial} $f(x)$ is a SoS if it can be written as a sum of squares (lol):
+%
+\begin{equation}
+  f(x) =
+  \sum_{i=1}^N h_i^2(x) =
+  \sum_{i=1}^N \left(q_i\tp v(x)\right)^2 =
+  v\tp(x) Q v(x)
+\end{equation}
+%
+where $v(x)$ is a vector of monomials, and $Q \geq 0$.
+
+A symmetric \emph{polynomial matrix} $M(x)$ is an SoS matrix if it can be written
+%
+\begin{equation}
+  M(x) = H\tp(x) H(x)
+\end{equation}
+%
+for some polynomial matrix $H(x)$.
+
+Note: There exists nonnegative polynomials that have to SoS decomposition. SoS decompositions are only guaranteed for nonnegative polynomials
+\begin{itemize}
+  \item in two variables,
+  \item in quadratic forms, or
+  \item in three variables and of fourth order.
+\end{itemize}
+
+Note 2: A polynomial may have more than one SoS decomposition, such as these:
+%
+\begin{equation}
+  \underbrace{2x_1^4 + 2x_1^3x_2 - x_1^2x_2^2 + 5x_2^4}_{f(x)}
+  =
+  \underbrace{\bmat{x_1^2 \\ x_2^2 \\ x_1x_2}\tp}_{v(x)\tp}
+  \underbrace{\bmat{2 & 0 & 1 \\ 0 & 5 & 0 \\ 1 & 0 & -1}}_{Q_1}
+  \underbrace{\bmat{x_1^2 \\ x_2^2 \\ x_1x_2}}_{v(x)}
+\end{equation}
+%
+and
+%
+\begin{equation}
+  \underbrace{2x_1^4 + 2x_1^3x_2 - x_1^2x_2^2 + 5x_2^4}_{f(x)}
+  =
+  \underbrace{\bmat{x_1^2 \\ x_2^2 \\ x_1x_2}\tp}_{v(x)\tp}
+  \underbrace{\bmat{2 & -\lambda & 1 \\ -\lambda & 5 & 0 \\ 1 & 0 & 2\lambda -1}}_{Q_2}
+  \underbrace{\bmat{x_1^2 \\ x_2^2 \\ x_1x_2}}_{v(x)}
+\end{equation}
+
+We have $\det(Q_1) = -15$, and therefore $Q_1 \ngeq 0$. Therefore, $Q_1$ does not imply that $f(x)$ is a SoS polynomial. However, we can find a $\lambda$ in $Q_2$ that gives $Q_2 \geq 0$, such as $\lambda = 1 \Rightarrow \det(Q_2) = 4 \Rightarrow Q_2 \geq 0$. Thus $f(x)$ is a SoS polynomial after all.
+
+It turns out that in general the set of parameters that make a symmetric matrix $Q \geq 0$ is convex when it depends linearly on its parameters, and thus SoS constraints are convex.
+
+\subsubsection{Numerical issues}
+Sometimes $Q$ is very ill-conditioned, with tiny eigenvalues. Can be improved by
+\begin{itemize}
+  \item removing unused elements of $v(x)$
+  \item making $Q$ block-diagonal,
+  \item altering $Q$ based on an initial solution,
+  \item using software that pre- and post-processes automatically.
+\end{itemize}
+
+\subsubsection{Proof of positivity}
+Primal SoS optimization always yields a P.D. $Q$, but the solution may be so inaccurate that the polynomial is still not SoS. With
+%
+\begin{gather}
+    \lambda_{\min}(Q) = \min \eig(Q) \\
+    v(x) \in \mathbb{R}^M \\
+    r = f(x) - v\tp(x) Q v(x)
+\end{gather}
+%
+we can guarantee positivity of $f(x)$ given
+%
+\begin{equation}
+  \begin{split}
+    \lambda_{\min}(Q) &\geq 0 \\
+    \lambda_{\min}(Q) &\geq M \cdot \abs(r)
+  \end{split}
+\end{equation}
+
+Sometimes, a dual solver will find a valid solution that the primal does not find.
+
+\subsection{LMIs and SoS}
+SoS problems are a special case of LMIs, but only some LMI ``tricks'' can be applied to SoSs:
+
+\subsubsection{Linearizing change of variables}
+If a problem depends linearly on $P>0$ and $PK$ (no standalone $K$s), then we can use $L = PK$ to make the problem linear in $L$ and $P$.
+
+\subsubsection{Congruence transform}
+For matrix SoSs with $M(x) \geq 0$ and a full rank $W(x)$:
+\begin{equation}
+  M(x) \geq 0 \Leftrightarrow W\tp(x) M(x) W(x) \geq 0
+\end{equation}
+Note: Cannot be used with scalarized Schur complement.
+
+\subsubsection{Scalarization}
+For an LMI:
+%
+\begin{equation}
+  L > 0 \Leftrightarrow x\tp L x > 0 \quad \forall x
+\end{equation}
+%
+For an SoS:
+%
+\begin{equation}
+  M(x) > 0 \nLeftrightarrow x\tp M(x) x > 0
+\end{equation}
+%
+Instead:
+%
+\begin{equation}
+  M(x) > 0 \Leftrightarrow z\tp M(x) z > 0 \quad \forall x, \forall z
+\end{equation}
+%
+As it turns out, it's better to formulate scalar-valued SoS problems.
+
+\subsubsection{Scalarized Schur complement}
+With
+%
+\begin{equation}
+  M(x) = \bmat{E(x) & F\tp(x) \\ F(x) & P(x)},\quad P(x) \mbox{ symmetric and invertible}
+\end{equation}
+%
+then
+%
+\begin{equation}
+  \bsmat{x \\ z}\tp M(x) \bsmat{x \\ z} > 0,\quad \forall\{x,z\} \neq \{0,0\}
+\end{equation}
+%
+is equivalent to
+%
+\begin{equation}
+  \begin{split}
+    x\tp \left( E - F\tp P\inv F \right) x &> 0,\quad \forall x \neq 0 \\
+    z\tp P z &> 0,\quad \forall z \neq 0, \forall x
+  \end{split}
+\end{equation}
+%
+because of
+%
+\begin{equation}
+  M(x) =
+  \bmat{I & F\tp P\inv \\ 0 & I}
+  \bmat{E - F\tp P\inv F & 0 \\ 0 & P}
+  \bmat{I & 0 \\ P\inv F & I}.
+\end{equation}
+
+If we have
+%
+\begin{equation}
+  \bmat{x \\ w} =
+  \bmat{I & 0 \\ P\inv(x) F(x) & I}
+  \bmat{x \\ z}
+\end{equation}
+%
+then $w$ can take any value regardless of $x$, by choosing $z$, and $z$ can take any value by choosing $w$.
+
+\subsubsection{S-procedure}
+We want to prove $f(x) > 0$ when $g(x) < 0$. Can be written
+%
+\begin{equation}
+  f(x) + s(x) g(x) > 0
+\end{equation}
+%
+for a arbitrary SoS polynomial $s(x)$. With this formulation, optimizing over parameters in $s(x)$ and $g(x)$ gives a bilinear problem.
+
+\subsection{Bilinear discrete systems}
+The bilinear\footnote{Bilinear because the next state is a function with a term that is a product of the state and the input. In a linear system, the $B_x$ term would not be present.} system
+%
+\begin{equation}
+  x_{k+1} = A x_k + \sum_{i=1}^m (B_i x_k + b_i) u_{i,k} = A x_k + (B_x + B) u_k
+\end{equation}
+%
+is stable under state feedback if
+%
+\begin{gather}
+  x_k\tp P x_k - x_{k+1}\tp P x_{k+1} > 0 \\
+  x_k\tp P x_k
+  -
+  \big(
+    A x_k + (B_k + B) u_k(x_k)
+  \big)\tp
+  P
+  \big(
+    A x_k + (B_k + B) u_k(x_k)
+  \big)
+  > 0
+\end{gather}
+
+If the system is open-loop unstable, $u_k(x_k)$ must be a ratio of samo-order polynomials to achieve global quadratic stability, such as:
+%
+\begin{equation}
+  u_k(x_k) = \frac{C(x_k) x_k}{c_0(x_k) + 1}
+\end{equation}
+%
+where $C(x_k)$ is a polynomial matrix and $c_0(x_k)$ is an SoS polynomial.
+
+\subsubsection{Region of convergence}
+With a quadratic LF $V(x_k) = x_k\tp P x_k$, a polynomial matrix $C(x_k)$, and SoS polynomials $c_0(x_k)$, $s_1(x_k,z)$, then the closed loop system is stable for all $x_k | x_k\tp P x_k < \gamma$ given
+%
+\begin{equation}
+  \bmat{x_k \\ z}\tp
+  M(x)
+  \bmat{x_k \\ z}
+  -
+  s_1(x_k,z) (\gamma - x_k\tp P x_k) > 0
+\end{equation}
+%
+where (omitting arguments for brevity)
+%
+\begin{equation}\label{eq:polynomial-matrix-convergence}
+  M(x_k) =
+  \begin{bmatrix}
+    (c_0 + 1) P & \big( (c_0 + 1)A + (B_x + B)C \big)\tp P \\
+    P \big( (c_0 + 1)A + (B_x + B)C \big) & (c_0 + 1)P
+  \end{bmatrix}
+\end{equation}
+%
+which comes from $(c_0 + 1)$ being strictly positive, and using the scalarized Schur complement and the S-procedure.
+
+\subsubsection{Input saturation}
+The input constraints
+%
+\begin{equation}
+  -u_{i,\max} \leq u_i \leq u_{i,\max}
+\end{equation}
+%
+are satisfied for all $x_k | x_k\tp P x_k < \gamma$ given
+\begin{equation}
+  \begin{bmatrix}
+    \big( c_0(x_k) + 1 \big)u_{i,\max}^2 - q_i(x_k)(\gamma - x_k\tp P x_k) & c_i(x_k) \\
+    c_i(x_k) & c_0(x_k) + 1
+  \end{bmatrix}
+  > 0
+\end{equation}
+%
+where
+%
+$c_i(x_k)$ are rows of $C(x_k)$, and $c_0(x_k)$ and $q_i(x_k)$ are SoS polynomials.
+
+\subsubsection{Rate of convergence}
+We can change $M(x)$ from \eqref{eq:polynomial-matrix-convergence} to
+\begin{equation}
+  M(x_k) =
+  \begin{bmatrix}
+    (1 - \alpha)(c_0 + 1) P & \big( (c_0 + 1)A + (B_x + B)C \big)\tp P \\
+    P \big( (c_0 + 1)A + (B_x + B)C \big) & (c_0 + 1)P
+  \end{bmatrix}
+\end{equation}
+to guarantee an exponential convergence defined by $\alpha$. There will be a tradeoff between maximizing the region of convergence and rate of convergence. Using this $M(x)$ allows us to determine the tradeoff.
+
+\subsubsection{Optimization formulation}
+\begin{enumerate}
+  \item If $\alpha$, $\gamma$, and $P$ are known, then $C$, $c_0$, $q_i$, $s_1$ enter linearly into inequalities above, and they can be solved as is.
+  \item If $\gamma$ and $P$ are known, we can find $C$, $c_0$, $q_i$, $s_1$ by formulating a feasibility problem (optimization without objective).
+  \item If $C$, $c_0$, $q_i$, and $s_1$ are known, we can maximize $\gamma$ with $P$ as a free variable. Must normalize $P$, i.e. by a constraint $\trace(P) = k$, for some constant $k$.
+  \item Can iterate between the two points directly above to create a controller with gradually larger region of convergence.
+\end{enumerate}

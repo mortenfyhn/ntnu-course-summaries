@@ -5,13 +5,22 @@
 \usepackage{libertine}
 \usepackage[libertine]{newtxmath}
 \usepackage{microtype}
+\usepackage{mathtools}
 \usepackage{amsmath}
+\usepackage{amssymb}
 
 \setcounter{tocdepth}{1}
 
 \newcommand*{\sub}[1]{_\mathrm{#1}}
+\newcommand*{\tp}{^{T}}
+\newcommand{\bmat}[1]{\begin{bmatrix} #1 \end{bmatrix}}
+\newcommand{\bsmat}[1]{\begin{bsmallmatrix} #1 \end{bsmallmatrix}}
+\newcommand*{\inv}{^{-1}}
+
 \DeclareMathOperator{\diag}{diag}
-\newcommand*{\transp}{^{T}}
+\DeclareMathOperator{\eig}{eig}
+\DeclareMathOperator{\abs}{abs}
+\DeclareMathOperator{\trace}{trace}
 
 \title{Summary of TTK18}
 \date{\today}
@@ -22,8 +31,9 @@
 \maketitle
 % \tableofcontents
 
-% \input{tex/sec-bilevel}
-% \input{tex/sec-linear-matrix-inequalities}
-\input{tex/sec-lmis-for-pwa-systems.tex}
+\input{tex/sec-bilevel}
+\input{tex/sec-lmis}
+\input{tex/sec-lmis-for-pwa}
+\input{tex/sec-sos}
 
 \end{document}
