@@ -64,27 +64,29 @@ That is, $E_i x + e_i \geq 0$ for all values of $x$, and $F_i x + f_i = F_j x + 
 \begin{equation}
   V(x) =
   \begin{cases}
-    x^T P_i x & x \in X_i, i \in I_0 \\
-    \begin{bmatrix} x \\ 1 \end{bmatrix}^T \bar{P}_i \begin{bmatrix} x \\ 1 \end{bmatrix} & x \in X_i, i \in I_1
+    x\tp P_i x, &x \in X_i, i \in I_0 \\
+    \bmat{x\\1}\tp \bar{P}_i \bmat{x\\1}, &x \in X_i, i \in I_1
   \end{cases}
 \end{equation}
 %
-where\footnote{TODO: wtf is the T matrix?}
+where
 %
 \begin{equation}\label{eq:pwa-lyapunov-matrix}
     P_i = F_i^T T F_i,\quad \bar{P}_i = \bar{F}_i^T T \bar{F}_i
 \end{equation}
+%
+and $T$ is some symmetric matrix.
 
 \subsubsection{Relaxing the LF}
-While $V(x) > 0$ is required for all $x$, we only need $P_i > 0$ for $x \in X_i$. The S-procedure can be used to alter the LF to reflect this\footnote{TODO: Double check that this actually is the Lyapunov function.}:
+While $V(x) > 0$ is required for all $x$, we only need $P_i > 0$ for $x \in X_i$. The S-procedure can be used to alter the LF to reflect this:
 %
 \begin{equation}
   V(x) =
   \begin{cases}
-    x\tp E_i\tp U_i E_i x & x \in X_i, i \in I_0 \\
+    x\tp E_i\tp U_i E_i x, &x \in X_i, i \in I_0 \\
     \begin{bmatrix} x \\ 1 \end{bmatrix}\tp
     \bar{E}_i\tp U_i \bar{E}_i\tp
-    \begin{bmatrix} x \\ 1 \end{bmatrix} & x \in X_i, i \in I_1
+    \begin{bmatrix} x \\ 1 \end{bmatrix}, &x \in X_i, i \in I_1
   \end{cases}
 \end{equation}
 %
@@ -95,17 +97,19 @@ Find symmetric matrices $T$, $U_i$, $W_i$ ($U_i$ and $W_i$ with no negative elem
 %
 \begin{equation}
   \begin{split}
-    \begin{cases}
+    \begin{rcases}
       A_i\tp P_i + P_i A_i + E_i\tp U_i E_i < 0 \\
       P_i - E_i\tp W_i E_i > 0
-    \end{cases} &i \in I_0 \\
-    \begin{cases}
+    \end{rcases} &i \in I_0 \\
+    \begin{rcases}
       \bar{A}_i\tp \bar{P}_i + \bar{P}_i \bar{A}_i + \bar{E}_i\tp U_i \bar{E}_i < 0 \\
       \bar{P}_i - \bar{E}_i\tp W_i \bar{E}_i > 0
-    \end{cases} &i \in I_1
+    \end{rcases} &i \in I_1
   \end{split}
 \end{equation}
+%
 with \eqref{eq:pwa-lyapunov-matrix} still holding:
+%
 \begin{equation}
   P_i = F_i^T T F_i,\quad \bar{P}_i = \bar{F}_i^T T \bar{F}_i
 \end{equation}
@@ -114,6 +118,7 @@ $\bar{E}_i$ and $\bar{F}_i$ can be determined e.g. with explicit formulas found 
 
 \subsection{Discrete-time Lyapunov stability}
 With discrete systems
+%
 \begin{itemize}
   \item we don't need a continuous LF,
   \item we use LF difference rather than LF differential,
@@ -130,6 +135,7 @@ then no common LF can be found for the PWL system.
 
 \subsubsection{Stability criteria}
 $f(X_l)$ is a quadratic function positive on $X_l$, such as
+%
 \begin{equation}
   f(X_i) =
   \begin{cases}
@@ -139,6 +145,7 @@ $f(X_l)$ is a quadratic function positive on $X_l$, such as
 \end{equation}
 
 Rewrite the system
+%
 \begin{equation}
   \bar{x} = \bmat{x \\ 1}, \quad \bar{x}_{k+1} = \bar{A}_i \bar{x}_k
 \end{equation}

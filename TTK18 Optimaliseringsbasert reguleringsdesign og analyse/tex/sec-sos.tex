@@ -6,7 +6,8 @@ SoS decomposition can prove non-negativity of polynomials, and can be used for c
 A (multivariate) polynomial is
 %
 \begin{equation}
-  f(x) = \sum_k c_k x_1^{a_{k1}} \dots x_n^{a_{kn}},\quad a_{ki} \in \mathbb{Z},
+  f(x) = \sum_k c_k
+  \underbrace{x_1^{a_{k1}} \dots x_n^{a_{kn}}}_{\text{a monomial}},\quad a_{ki} \in \mathbb{Z},
 \end{equation}
 %
 and a monomial is one term in a polynomial, without the coefficient:
@@ -109,22 +110,16 @@ For matrix SoSs with $M(x) \geq 0$ and a full rank $W(x)$:
 Note: Cannot be used with scalarized Schur complement.
 
 \subsubsection{Scalarization}
-For an LMI:
+For an LMI, positive definiteness has the relation
 %
 \begin{equation}
   L > 0 \Leftrightarrow x\tp L x > 0 \quad \forall x
 \end{equation}
 %
-For an SoS:
+while for an SoS it is instead
 %
 \begin{equation}
-  M(x) > 0 \nLeftrightarrow x\tp M(x) x > 0
-\end{equation}
-%
-Instead:
-%
-\begin{equation}
-  M(x) > 0 \Leftrightarrow z\tp M(x) z > 0 \quad \forall x, \forall z
+  M(x) > 0 \Leftrightarrow z\tp M(x) z > 0 \quad \forall x, \forall z.
 \end{equation}
 %
 As it turns out, it's better to formulate scalar-valued SoS problems.
