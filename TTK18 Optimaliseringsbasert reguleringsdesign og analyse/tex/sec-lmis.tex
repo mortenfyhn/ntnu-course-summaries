@@ -3,16 +3,20 @@
 Many problems in systems and control can be reduced to optimization problems involving LMIs, for which there exist efficient numerical solvers.
 
 An LMI has the form
+%
 \begin{equation}
   F(p) = F_0 + \sum_{i=1}^m p_i F_i > 0
 \end{equation}
+%
 where $p \in \mathbb{R}^m$ is the variable, and $F_i = F_i^T \in \mathbb{R}^{n \times n}$, $i = 0, \dots, m$. Multiple LMIs can be rewritten as a single LMI by stacking each matrix on the diagonal:
+%
 \begin{equation}
   \diag \left( F^{(1)}(x), \dots, F^{(p)}(x) \right) > 0
 \end{equation}
 
 \subsection{Some LMI problems}
 \paragraph{Feasibility problem} Is $\dot{x} = Ax$ stable? It is if there is a $P > 0$ for Lyapunov function $V(x) = x\tp P x$ such that $A\tp P + PA < 0$. This can be written
+%
 \begin{equation}
   \begin{bmatrix}
     A\tp P + PA & 0 \\
@@ -22,11 +26,14 @@ where $p \in \mathbb{R}^m$ is the variable, and $F_i = F_i^T \in \mathbb{R}^{n \
 \end{equation}
 
 \paragraph{Convex function minimization} For the system
+%
 \begin{equation}
   \dot{x} = Ax + Bw \\
   z = Cx + Dw
 \end{equation}
+%
 the $H_\infty$-norm of the transfer function from $w$ to $z$ can be found by
+%
 \begin{equation}
 \begin{split}
   \min \gamma & \\
@@ -42,28 +49,36 @@ the $H_\infty$-norm of the transfer function from $w$ to $z$ can be found by
 \subsection{LMI tricks}
 \subsubsection{Preliminaries}
 If $W$ is full rank, then pre-multiplication with $W\tp$ and post-multiplication with $W$ does not change sign-definiteness:
+%
 \begin{equation}\label{eq:pre-post-multiply}
   Q > 0 \Leftrightarrow W\tp Q W > 0 \quad (\mbox{for full rank } W)
 \end{equation}
 
-\subsubsection{Change of variables}
+\subsubsection{Change of variables}\label{sssec:change-of-variables}
 Sometimes changing the variables can linearize the problem.
 \paragraph{Example} State feedback: Find $u = Kx$ to stabilize the system. Must find $P > 0$ and $K$ such that
+%
 \begin{equation}
-  (A + BK)\tp + P(A + BK) < 0.
+  (A + BK)\tp P + P(A + BK) < 0.
 \end{equation}
+%
 If this is fullfilled, we have shown Lyapunov stability, but this is not linear in $P$ and $K$. Like in \eqref{eq:pre-post-multiply}, we can pre- and postmultiply by $Q = P^{-1}$ to get
+%
 \begin{equation}
   QA\tp + AQ + QK\tp B\tp + BKQ < 0
 \end{equation}
+%
 and define $L = KQ$ to get (remember $Q = P^{-1}$ so $Q = Q\tp$)
+%
 \begin{equation}
   QA\tp + AQ + L\tp B\tp + BL < 0.
 \end{equation}
+%
 This is an LMI in $Q > 0$ and $L$!
 
 \subsubsection{Congruence transform}
 With
+%
 \begin{equation}
   Q =
   \begin{bmatrix}
@@ -72,7 +87,9 @@ With
   \end{bmatrix}
   < 0
 \end{equation}
+%
 in variables $P>0$, $V>0$, $K$. Choosing the full-rank $W$
+%
 \begin{equation}
   W =
   \begin{bmatrix}
@@ -80,7 +97,9 @@ in variables $P>0$, $V>0$, $K$. Choosing the full-rank $W$
     0 & V^{-1}
   \end{bmatrix}
 \end{equation}
+%
 gives
+%
 \begin{equation}
   W\tp Q W =
   \begin{bmatrix}
@@ -88,10 +107,12 @@ gives
     * & -2U
   \end{bmatrix}
 \end{equation}
+%
 which is an LMI in $X = P^{-1}$, $U = V^{-1}$, $L = KV^{-1}$.
 
 \subsubsection{Schur complement}
 These are equivalent:
+%
 \begin{equation}
   \Phi =
   \begin{bmatrix}
@@ -176,11 +197,190 @@ This can be transformed into an LMI by the S-procedure:
   \bmat{x \\ z}
   < 0.
 \end{equation}
+%
 This is an LMI in $P>0$ and $\tau \geq 0$.
 
-\subsubsection{More tricks}
-\begin{itemize}
-  \item Projection lemma
-  \item Finsler's lemma
-\end{itemize}
-Both can be used to make problems smaller.
+\subsubsection{Projection lemma}
+Sometimes we get equations like
+%
+\begin{equation}\label{eq:finsler-projection-formulation}
+  \Psi(X) + G(X)\Lambda\tp H(X) + H(X)\Lambda\tp G\tp(X) < 0
+\end{equation}
+%
+in matrix variables $X$ and $\Lambda$. $\Psi$, $G$, and $H$ are affine functions of $X$. Equation \eqref{eq:finsler-projection-formulation} is equivalent to
+%
+\begin{equation}
+  \begin{split}
+    W_{G(X)}\tp \Psi(X) W_{G(X)} &< 0 \\
+    W_{H(X)}\tp \Psi(X) W_{H(X)} &< 0
+  \end{split}
+\end{equation}
+%
+where $W_{G(X)}$ and $W_{H(X)}$ are orthogonal complements to $G$ and $H$:
+\begin{gather}
+  W_{G(X)} G(X) = 0,\quad W_{H(X)} H(X) = 0 \\
+  \rank W_{G(X)} + \rank G = n,\quad \rank W_{H(X)} + \rank H = n.
+\end{gather}
+%
+This is useful as may linearize the formulation, and it may reduce the number of variables in the computation.
+
+\paragraph{Example} State feedback:
+%
+\begin{equation}
+  (A + BK)\tp P + P(A + BK) < 0,\quad P > 0
+\end{equation}
+%
+can be rewritten by a change of variables (Section \ref{sssec:change-of-variables}) as
+%
+\begin{equation}
+  QA\tp + AQ + L\tp B\tp + BL < 0,\quad Q > 0.
+\end{equation}
+%
+Using the projection lemma this can be written without $L$:
+%
+\begin{equation}
+  \begin{rcases}
+    W_B\tp(AQ+QA\tp)W_B < 0 \\
+    W_I\tp(AQ+QA\tp)W_I < 0
+  \end{rcases} Q > 0
+\end{equation}
+%
+In this case the second inequality is unnecessary, because $I$ is full rank. First inequality can be interpreted as ``the system is stable if it is stable in the null space of the inputs.''
+
+\subsubsection{Finsler's lemma}
+Finsler's lemma is another way of writing \eqref{eq:finsler-projection-formulation} more compactly:
+%
+\begin{equation}
+  \begin{split}
+    \Psi(X) - \sigma G(X) G(X)\tp &< 0 \\
+    \Psi(X) - \sigma H(X) H(X)\tp &< 0
+  \end{split}
+\end{equation}
+%
+for some real $\sigma$.
+
+\paragraph{Example} State feedback:
+%
+\begin{equation}
+  (A + BK)\tp P + P(A + BK) < 0,\quad P > 0
+\end{equation}
+%
+can be rewritten
+%
+\begin{equation}
+  QA\tp + AQ + L\tp B\tp + BL < 0,\quad Q > 0.
+\end{equation}
+%
+Using Finsler's lemma this can be written without $L$
+%
+\begin{equation}
+  \begin{rcases}
+    &AQ + QA\tp - \sigma BB\tp < 0 \\
+    &AQ + QA\tp - \sigma I < 0
+  \end{rcases} Q > 0.
+\end{equation}
+%
+As long as $Q$ and $\sigma$ fulfilling first inequality are found, it is always possible to find $\sigma$ to fulfill the second.
+
+\subsection{Applications}
+
+\subsubsection{Discrete-time state feedback stabilization}
+Discrete systems use Lyapunov differences. For the LF
+%
+\begin{equation}
+  V(x_k) = x_k\tp P x_k,\quad P>0
+\end{equation}
+%
+the system is stable if
+%
+\begin{equation}
+  V(x_k) - V(x_{k+1}) = x_k\tp P x_k - x_{k+1}\tp P x_{k+1} > 0,
+\end{equation}
+%
+which is equivalent to
+%
+\begin{equation}
+  P - (A + BK)\tp P (A+BK) > 0.
+\end{equation}
+%
+The Schur complement is
+%
+\begin{equation}
+  \begin{bmatrix}
+    P & (A + BK)\tp P \\
+    P(A + BK) & P
+  \end{bmatrix}
+  > 0,
+\end{equation}
+%
+and congruence transform with $W = \bmat{P\inv & 0 \\ 0 & P\inv}$ gives
+%
+\begin{equation}
+  \begin{bmatrix}
+    P\inv & P\inv (A + BK)\tp \\
+    (A + BK) P\inv & P\inv
+  \end{bmatrix}
+  > 0.
+\end{equation}
+%
+A change of variables $Q = P\inv$, $L = KP\inv$ gives
+%
+\begin{equation}
+  \begin{bmatrix}
+    Q & QA\tp + L\tp B\tp \\
+    AQ + BL & Q
+  \end{bmatrix}
+  > 0
+\end{equation}
+%
+which is an LMI in $Q > 0$ and $L$.
+
+\subsubsection{Robust feedback stabilization}
+Plant not exactly known, but known to be in a set
+%
+\begin{equation}
+  \bmat{A \\ B} \in \co \bmat{A_1 \dots A_q \\ B_1 \dots B_q}
+\end{equation}
+%
+where $\co$ denotes convex combination. Equivalent:
+%
+\begin{equation}
+    A = \sum_{i=1}^q a_i A_i,\quad B = \sum_{i=1}^q a_i B_i \\
+\end{equation}
+%
+with
+%
+\begin{equation}
+  \sum_{i=1}^q a_i = 1, a_i \geq 0.
+\end{equation}
+%
+A controller that solves the LMIs for all $q$ extreme plants with the same $Q$ and $L$ is stable for all $A$ and $B$.
+
+\subsubsection{Parameter dependent LFs}
+Some LFs have the form
+%
+\begin{equation}
+  V(\delta,x) = x\tp P(\delta)x,\quad P(\delta) = P_0 + \sum_{i=1}^q \delta_i P_i.
+\end{equation}
+%
+which gives
+%
+\begin{equation}
+  \od{P(\delta)}{t} = \dot{\delta}_1 P_1 + \dots + \dot{\delta}_q P_q = P(\dot{\delta}) - P_0
+\end{equation}
+%
+leading to
+%
+\begin{equation}
+  \dot{V}(\delta,x) = x\tp \left(A\tp(\delta) P(\delta) + P(\delta) A(\delta) + P(\dot{\delta}) - P_0 \right)x.
+\end{equation}
+%
+Which is stable if there exists matrices $P_0 \dots P_q$ such that
+%
+\begin{equation}
+  \begin{split}
+    A\tp(\delta)P(\delta) + P(\delta)A(\delta) + P(\dot\delta) &< P_0, \quad \forall \delta \in \Delta_0, \forall \dot\delta \in \Lambda_0 \\
+    P(\delta) &> I, \quad \forall \delta \in \Delta_0 \\
+    A_i\tp + P_iA_i &\leq 0,\quad i = 1,\dots,q.
+  \end{split}
+\end{equation}

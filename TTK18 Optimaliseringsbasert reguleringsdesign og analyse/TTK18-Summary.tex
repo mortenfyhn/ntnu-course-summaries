@@ -11,6 +11,7 @@
 \usepackage[hidelinks]{hyperref}
 \usepackage{enumitem}
   \setlist{nolistsep}
+\usepackage{commath}
 
 \setcounter{tocdepth}{1}
 
@@ -22,8 +23,11 @@
 
 \DeclareMathOperator{\diag}{diag}
 \DeclareMathOperator{\eig}{eig}
-\DeclareMathOperator{\abs}{abs}
+% \DeclareMathOperator{\abs}{abs}
+\renewcommand*{\abs}{\operatorname{abs}} % Can't use DeclareMathOperator because of conflict with commath package
 \DeclareMathOperator{\trace}{trace}
+\DeclareMathOperator{\co}{Co}
+\DeclareMathOperator{\rank}{rank}
 
 \title{Summary of TTK18}
 \date{\today}
