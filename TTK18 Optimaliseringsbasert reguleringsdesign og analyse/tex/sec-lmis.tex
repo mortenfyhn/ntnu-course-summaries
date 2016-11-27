@@ -28,8 +28,10 @@ where $p \in \mathbb{R}^m$ is the variable, and $F_i = F_i^T \in \mathbb{R}^{n \
 \paragraph{Convex function minimization} For the system
 %
 \begin{equation}
-  \dot{x} = Ax + Bw \\
-  z = Cx + Dw
+  \begin{split}
+    \dot{x} &= Ax + Bw \\
+    z &= Cx + Dw
+  \end{split}
 \end{equation}
 %
 the $H_\infty$-norm of the transfer function from $w$ to $z$ can be found by
@@ -357,6 +359,20 @@ with
 A controller that solves the LMIs for all $q$ extreme plants with the same $Q$ and $L$ is stable for all $A$ and $B$.
 
 \subsubsection{Parameter dependent LFs}
+With a model
+%
+\begin{equation}
+  A = A_0 + \sum­­_{i=1}^q \delta_i A_i
+\end{equation}
+%
+with bounds and rate limits
+%
+\begin{equation}
+  \delta_i \in [\underline\delta_i, \overline\delta_i], \quad \dot\delta_i \in [\underline\lambda_i, \overline\lambda_i ]
+\end{equation}
+%
+The set $\Delta$ is the set of all $\delta$ within its bounds, and $\Lambda$ is the set of all $\dot\delta$ within its rate limits. $\Delta_0$ and $\Lambda_0$ are their respective vertex sets.
+
 Some LFs have the form
 %
 \begin{equation}
@@ -366,7 +382,7 @@ Some LFs have the form
 which gives
 %
 \begin{equation}
-  \od{P(\delta)}{t} = \dot{\delta}_1 P_1 + \dots + \dot{\delta}_q P_q = P(\dot{\delta}) - P_0
+  \od{P(\delta)}{t} = \dot\delta_1 P_1 + \dots + \dot\delta_q P_q = P(\dot\delta) - P_0
 \end{equation}
 %
 leading to
@@ -384,3 +400,5 @@ Which is stable if there exists matrices $P_0 \dots P_q$ such that
     A_i\tp + P_iA_i &\leq 0,\quad i = 1,\dots,q.
   \end{split}
 \end{equation}
+%
+This means that we only have to find valid LFs for the ``extreme points'', i.e. when $\delta$ or $\dot\delta$ is at saturation.

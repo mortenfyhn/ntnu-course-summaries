@@ -3,46 +3,57 @@
 A bi-level program is an optimization problem that depends on the solution of another optimization problem, called ``upper level'' (UL) and ``lower level'' (LL) problems, respectively.
 %
 \begin{equation}\label{eq:bilevel-general}
-\begin{split}
+  \begin{split}
     \min_x f\sub{UL}(x,z) \\
     G\sub{UI}(x,z) \leq 0 \\
     G\sub{UE}(x,z) = 0 \\
     z = \arg \min_z f\sub{LL}(x,z) \\
     G\sub{LI}(x,z) \leq 0 \\
     G\sub{LE}(x,z) = 0
-\end{split}
+  \end{split}
 \end{equation}
 
 \subsection{Restricting problem classes}
-The formulation \eqref{eq:bilevel-general} is very general. Must restrict the problem in order to solve efficiently:
+The formulation \eqref{eq:bilevel-general} is very general. Must restrict the problem in order to solve efficiently, by assuming:
 %
 \begin{itemize}
-    \item Assume LL problem is convex and regular.
-    \item Assume linear constraints.
-    \item Assume Linear or quadratic objective functions.
+  \item LL problem is convex and regular (TODO: what is regular?),
+  \item linear constraints, and
+  \item linear or quadratic objective functions.
 \end{itemize}
 %
 Then we can replace the LL problem with its KKT conditions. The Lagrangian function is
 %
 \begin{equation}
-    \mathcal{L}(x,z,\lambda,\mu) = f\sub{LL}(x,z) + \lambda^T G\sub{LI}(x,z) + \mu^T G\sub{LE}(x,z)
+  \mathcal{L}(x,z,\lambda,\mu) = f\sub{LL}(x,z) + \lambda^T G\sub{LI}(x,z) + \mu^T G\sub{LE}(x,z)
 \end{equation}
 %
 and the KKT conditions are
 %
 \begin{equation}
-\begin{split}
-    \nabla_z \mathcal{L}(x,z,\lambda,\mu) = 0 \\
-    G\sub{LI}(x,z) \leq 0 \\
-    G\sub{LE}(x,z) = 0 \\
-    \lambda \geq 0 \\
-    \lambda \cdot G\sub{LI}(x,z) = 0
-\end{split}
+  \begin{split}
+    \nabla_z \mathcal{L}(x,z,\lambda,\mu) &= 0 \\
+    G\sub{LI}(x,z) &\leq 0 \\
+    G\sub{LE}(x,z) &= 0 \\
+    \lambda &\geq 0 \\
+    \lambda \hadamard G\sub{LI}(x,z) &= 0
+  \end{split}
 \end{equation}
-
+%
+where $\hadamard$ is the entrywise product. Line by line, the KKT conditions can be interpreted as
+%
+\begin{itemize}
+  \item the Lagrangian does not change,
+  \item the inequality constraints hold,
+  \item the equality constraints hold,
+  \item the Lagrange multipliers are nonnegative,
+  \item each inequality constraint is either active, or its Lagrange multiplier is zero.
+\end{itemize}
+%
 The overall problem is then
+%
 \begin{equation}
-\begin{split}
+  \begin{split}
     \min_{x,z,\lambda,\mu} f\sub{UL}(x,z) & \\
     G\sub{UI}(x,z) & \leq 0 \\
     G\sub{UE}(x,z) &= 0 \\
@@ -50,27 +61,30 @@ The overall problem is then
     G\sub{LI}(x,z) &\leq 0 \\
     G\sub{LE}(x,z) &= 0 \\
     \lambda &\geq 0 \\
-    \lambda \cdot G\sub{LI}(x,z) &= 0, \mbox{ TODO: fix this operator}
-\end{split}
+    \lambda \hadamard G\sub{LI}(x,z) &= 0 \\
+  \end{split}
 \end{equation}
 %
 which is solvable for smaller problems, using e.g. YALMIP.
 
 \subsection{Big-M notation}
 Big-M formulation replaces nonlinear complementarity constraints with linear constraints using binary variables $s \in \{0,1\}$ to indicate activeness for inequality constraints:
+%
 \begin{equation}\label{eq:big-M}
-\begin{split}
+  \begin{split}
     G\sub{LI}(x,z) &\leq 0 \\
     G\sub{LI}(x,z) &\geq -M^u(1-s) \\
     \lambda        &\geq 0 \\
     \lambda        &\leq M^\lambda s
-\end{split}
+  \end{split}
 \end{equation}
+%
 This notation fulfills the complementarity constraints, and given large enough $M^u$ and $M^\lambda$, the solution is unchanged. When $s = 1$ we get $G\sub{LI}(x,z) = 0$ (inequality constraint active), and when $s = 0$ we get $\lambda = 0$ (inequality constraint inactive).
 
 The overall problem formulation becomes
+%
 \begin{equation}
-\begin{split}
+  \begin{split}
     \min_{x,z,\lambda,\mu,s} f\sub{UL}(x,z) \\
     G\sub{UI}(x,z) & \leq 0 \\
     G\sub{UE}(x,z) &= 0 \\
@@ -81,7 +95,7 @@ The overall problem formulation becomes
     G\sub{LI}(x,z) &\geq -M^u(1-s) \\
     \lambda &\leq M^\lambda s \\
     s &\in \{0,1\}
-\end{split}
+  \end{split}
 \end{equation}
 
 Linear $f\sub{UL}$ gives a MILP\footnote{Mixed integer linear program.}, quadratic $f\sub{UL}$ gives a MIQP\footnote{Mixed integer quadratic program.}. Nonconvex, $np$-hard, but efficient software exists.
@@ -91,9 +105,11 @@ Some steps can be taken to make MILP/MIQPs easier to solve.
 
 \subsubsection{Branch-and-bound}
 A branch-and-bound solver partitions the search space into regions, and finds an upper bound $UB$ and lower bound $LB$ for the solution in each region. If
+%
 \begin{equation}
-    LB_i > UB_j
+  LB_i > UB_j
 \end{equation}
+%
 then we know the solution is not in $i$, and we discard that region.
 
 You can also remove known symmetries from symmetric problems by adding extra constraints to make only one of the symmetric solutions feasible.
@@ -107,3 +123,24 @@ For a correct analytical solution, $M^u$ and $M^\lambda$ must be sufficiently la
 A good $M^u$ can sometimes be found by solving a series of LPs, if the LL constraints are bounded.
 
 $M^\lambda$ may need trial-and-error: If a value of $\lambda$ is constrained by $M^\lambda$, retry after increasing the corresponding element of $M^\lambda$.
+
+\subsection{Approximate explicit MPC}
+Explicit MPC means to solve the optimization problems offline, so that the solution can be calculated easily and explicitly online. Bilevel optimization can be used for this.
+%
+\begin{itemize}
+  \item Find a set of points $V$ whose convex hull describes the feasible region of the MPC.
+  \item Solve MPC problem for each such point in the state space.
+  \item Partition the convex hull of $V$ into simplices with triangulation.
+  \item Use linear interpolation in each simplex $S_i$ to define a piecewise affine state feedback
+  \begin{equation}
+    u = K^i x + k^i,\quad x \in S_i
+  \end{equation}
+  which will be feasible and continuous.
+  \item Further subdivide triangulation if $|u-u\sub{optimal}|$ too large or stability cannot be proven.
+  \begin{itemize}
+    \item Can check difference from optimal input by solving a bilevel program for each simplex.
+    \item If the error is too large, create a new point where the error is greatest.
+    \item The bilevel program will be nonlinear ($f\sub{UL} = \max_x \norm{u_0 - u}_\infty$), but can be linearized using big M.
+  \end{itemize}
+  \item Can prove stability by showing that the value function is an LF for the closed loop system.
+\end{itemize}
