@@ -8,14 +8,24 @@ An LMI has the form
   F(p) = F_0 + \sum_{i=1}^m p_i F_i > 0
 \end{equation}
 %
-where $p \in \mathbb{R}^m$ is the variable, and $F_i = F_i^T \in \mathbb{R}^{n \times n}$, $i = 0, \dots, m$. Multiple LMIs can be rewritten as a single LMI by stacking each matrix on the diagonal:
+where $p$ is the variable vector, and $F_i = F_i^T$. Multiple LMIs can be rewritten as a single LMI by stacking each matrix on the diagonal:
 %
 \begin{equation}
-  \diag \left( F^{(1)}(x), \dots, F^{(p)}(x) \right) > 0
+  \begin{bmatrix}
+    F^{(1)}(p) &&\\
+    & \ddots &\\
+    && F^{(n)}(p)
+  \end{bmatrix} > 0
 \end{equation}
 
 \subsection{Some LMI problems}
-\paragraph{Feasibility problem} Is $\dot{x} = Ax$ stable? It is if there is a $P > 0$ for Lyapunov function $V(x) = x\tp P x$ such that $A\tp P + PA < 0$. This can be written
+\paragraph{Feasibility problem} Is $\dot{x} = Ax$ stable? Yes, given
+%
+\begin{equation}\label{eq:linear-auto-stability}
+  A\tp P + PA < 0,\quad P > 0
+\end{equation}
+%
+for the Lyapunov function $V(x) = x\tp P x$. (This is equivalent to the requirement that all real parts of the eigenvalues of $A$ are negative.) Equation \eqref{eq:linear-auto-stability} can be written as a single LMI by stacking the two inequalities in one matrix:
 %
 \begin{equation}
   \begin{bmatrix}
@@ -36,17 +46,20 @@ where $p \in \mathbb{R}^m$ is the variable, and $F_i = F_i^T \in \mathbb{R}^{n \
 %
 the $H_\infty$-norm of the transfer function from $w$ to $z$ can be found by
 %
-\begin{equation}
-\begin{split}
-  \min \gamma & \\
+\begin{gather}
+% \begin{equation}
+% \begin{split}
+  \min \gamma \\
+  \mbox{s.t. }
   \begin{bmatrix}
     A\tp P + PA & PB & C\tp \\
     B\tp P & -\gamma I & D\tp \\
     C & D & -\gamma I
   \end{bmatrix}
-  & < 0
-\end{split}
-\end{equation}
+   < 0
+% \end{split}
+% \end{equation}
+\end{gather}
 
 \subsection{LMI tricks}
 \subsubsection{Preliminaries}
@@ -79,7 +92,7 @@ and define $L = KQ$ to get (remember $Q = P^{-1}$ so $Q = Q\tp$)
 This is an LMI in $Q > 0$ and $L$!
 
 \subsubsection{Congruence transform}
-With
+With e.g.
 %
 \begin{equation}
   Q =
@@ -90,7 +103,7 @@ With
   < 0
 \end{equation}
 %
-in variables $P>0$, $V>0$, $K$. Choosing the full-rank $W$
+in variables $P>0$, $V>0$, and $K$. Choosing the full-rank $W$
 %
 \begin{equation}
   W =
@@ -116,13 +129,12 @@ which is an LMI in $X = P^{-1}$, $U = V^{-1}$, $L = KV^{-1}$.
 These are equivalent:
 %
 \begin{equation}
-  \Phi =
   \begin{bmatrix}
     \Phi_{11} & \Phi_{12} \\
     \Phi_{12}\tp & \Phi_{22}
   \end{bmatrix}
   < 0
-  \Leftrightarrow
+  \quad \Leftrightarrow \quad
   \begin{cases}
     \Phi_{22} < 0 \\
     \Phi_{11} - \Phi_{12} \Phi_{22}^{-1} \Phi_{12}\tp < 0
@@ -178,7 +190,7 @@ when
 %
 \begin{equation}
   z\tp z \leq x\tp C\tp C x
-  \Leftrightarrow
+  \quad \Leftrightarrow \quad
   \bmat{x \\ z}\tp
   \underbrace{\bmat{C\tp C & 0 \\ * & -I}}_{F_1}
   \bmat{x \\ z}
@@ -224,7 +236,7 @@ where $W_{G(X)}$ and $W_{H(X)}$ are orthogonal complements to $G$ and $H$:
   \rank W_{G(X)} + \rank G = n,\quad \rank W_{H(X)} + \rank H = n.
 \end{gather}
 %
-This is useful as may linearize the formulation, and it may reduce the number of variables in the computation.
+This is useful as it may linearize the formulation, and it may reduce the number of variables in the computation.
 
 \paragraph{Example} State feedback:
 %
@@ -282,7 +294,7 @@ Using Finsler's lemma this can be written without $L$
   \end{rcases} Q > 0.
 \end{equation}
 %
-As long as $Q$ and $\sigma$ fulfilling first inequality are found, it is always possible to find $\sigma$ to fulfill the second.
+As long as $Q$ and $\sigma$ fulfilling the first inequality are found, it is always possible to find $\sigma$ to fulfill the second.
 
 \subsection{Applications}
 
@@ -362,7 +374,7 @@ A controller that solves the LMIs for all $q$ extreme plants with the same $Q$ a
 With a model
 %
 \begin{equation}
-  A = A_0 + \sum­­_{i=1}^q \delta_i A_i
+  A(\delta) = A_0 + \sum_{i=1}^q \delta_i A_i
 \end{equation}
 %
 with bounds and rate limits
@@ -371,7 +383,7 @@ with bounds and rate limits
   \delta_i \in [\underline\delta_i, \overline\delta_i], \quad \dot\delta_i \in [\underline\lambda_i, \overline\lambda_i ]
 \end{equation}
 %
-The set $\Delta$ is the set of all $\delta$ within its bounds, and $\Lambda$ is the set of all $\dot\delta$ within its rate limits. $\Delta_0$ and $\Lambda_0$ are their respective vertex sets.
+$\Delta$ is the set of all $\delta$ that are within the bounds, and $\Lambda$ is the set of all $\dot\delta$ within the rate limits. $\Delta_0$ and $\Lambda_0$ are their respective vertex sets.
 
 Some LFs have the form
 %

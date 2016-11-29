@@ -7,20 +7,20 @@ A piecewise affine system is a system where the state space $X$ is divided into 
 \begin{itemize}
   \item Partitions containing the origin are linear:
   \begin{equation}
-  \begin{split}
-    x &= A_i x \\
-    x_{k+1} &= A_i x_k
-  \end{split}
+    \begin{split}
+      x &= A_i x \\
+      x_{k+1} &= A_i x_k
+    \end{split}
   \end{equation}
   \item Partitions not containing the origin are affine:
   \begin{equation}
-  \begin{split}
-    x &= A_i x + a_i \\
-    x_{k+1} &= A_i x_k + a_i
-  \end{split}
+    \begin{split}
+      x &= A_i x + a_i \\
+      x_{k+1} &= A_i x_k + a_i
+    \end{split}
   \end{equation}
 \end{itemize}
-
+%
 The partitions are indexed, with an index set
 %
 \begin{equation}
@@ -33,8 +33,16 @@ where $I_0$ are the parititions containing the origin, and $I_1$ are the partiti
 Sometimes you can find a Lyapunov function for the whole PWA system:
 %
 \begin{itemize}
-  \item If $a_i = 0 \forall i$ and $\exists P = P^T > 0$ such that $A_i^T P + P A_i < 0 \forall i \in I$, then the origin is exponentially stable.
-  \item if  $a_i = 0 \forall i$ and $\exists R_i > 0 \forall i \in I$ such that $\sum_{i \in I} (A_i^T R_i + R_i A_i) > 0$, then a common Lyapunov function can be found.
+  \item If $a_i = 0 \forall i$ and there exists a $P = P^T > 0$ such that
+  \begin{equation}
+    A_i^T P + P A_i < 0 \quad \forall i \in I,
+  \end{equation}
+  then the origin is exponentially stable.
+  \item If $a_i = 0 \forall i$ and there exists an $R_i > 0 \forall i \in I$ such that
+  \begin{equation}
+    \sum_{i \in I} (A_i^T R_i + R_i A_i) > 0,
+  \end{equation}
+  then a common Lyapunov function can be found.
 \end{itemize}
 %
 When a common function cannot be found, we must look for one that depends on the partition.
@@ -54,8 +62,8 @@ Each partition is a polyhedron, so we can write
 where $e_i = 0$ and $f_i = 0$ for all $i \in I_0$ such that
 %
 \begin{gather}
-  \bar{E}_i \begin{bmatrix} x \\ 1 \end{bmatrix} \geq 0 \forall x \in X_i \forall i \in I \\
-  \bar{F}_i \begin{bmatrix} x \\ 1 \end{bmatrix} = \bar{F}_j \begin{bmatrix} x \\ 1 \end{bmatrix} \forall\; x \in X_i \cap X_j, \forall i, j \in I
+  \bar{E}_i \begin{bmatrix} x \\ 1 \end{bmatrix} \geq 0 \quad \forall x \in X_i \forall i \in I \\
+  \bar{F}_i \begin{bmatrix} x \\ 1 \end{bmatrix} = \bar{F}_j \begin{bmatrix} x \\ 1 \end{bmatrix} \quad \forall\; x \in X_i \cap X_j, \forall i, j \in I
 \end{gather}
 %
 That is, $E_i x + e_i \geq 0$ for all values of $x$, and $F_i x + f_i = F_j x + f_j$ for all $x$ along borders between partitions.
@@ -75,7 +83,7 @@ where
     P_i = F_i^T T F_i,\quad \bar{P}_i = \bar{F}_i^T T \bar{F}_i
 \end{equation}
 %
-and $T$ is some symmetric matrix.
+and $T$ is some symmetric matrix with positive elements.
 
 \subsubsection{Relaxing the LF}
 While $V(x) > 0$ is required for all $x$, we only need $P_i > 0$ for $x \in X_i$. The S-procedure can be used to alter the LF to reflect this:
@@ -134,7 +142,7 @@ If there exists matrices $R_i > 0$ such that
 then no common LF can be found for the PWL system.
 
 \subsubsection{Stability criteria}
-$f(X_l)$ is a quadratic function positive on $X_l$, such as
+$f(X_i)$ is a quadratic function positive on $X_i$, such as
 %
 \begin{equation}
   f(X_i) =
@@ -157,17 +165,17 @@ where
   \begin{cases}
     \bmat{A_i & a_i \\ 0 & 1},&
     \underbrace{x_k \in X_i, i \in I_1, x_{k+1} \in X_j, j \in I_1}
-              _{x \text{ moving between non-origin partitions}} \\
+              _{x \text{ moving between } I_1 \text{ partitions}} \\
     \bmat{A_i & a_i \\ 0 & 0},&
     \underbrace{x_k \in X_i, i \in I_1, x_{k+1} \in X_j, j \in I_0}
-              _{x \text{ moving from non-origin to origin partition}} \\
+              _{x \text{ moving from } I_1 \text{ to } I_0 \text{ partition}} \\
     \bmat{A_i & 0 \\ 0 & 0},&
     \underbrace{x_k \in X_i, i \in I_0, x_{k+1} \in X_j, j \in I_0}
-              _{x \text{ moving between origin-partitions}}.
+              _{x \text{ moving between } I_0 \text{ partitions}}.
   \end{cases}
 \end{equation}
 %
-then the system is stable if
+This formulation requires that $\cup_{i \in I_0} X_i$ is positively invariant.\footnote{All trajectories in the set never leave it.} The system is then stable if
 %
 \begin{equation}
   \begin{split}
