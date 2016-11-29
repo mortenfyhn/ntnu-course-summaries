@@ -1,4 +1,21 @@
 %!TEX root = ../TTK18-Summary.tex
 \section{Preliminaries}
 
-\subsection{KKT conditions}
+% \subsection{KKT conditions}
+% Yada yada yada.
+
+\subsection{Lyapunov stability}
+
+\paragraph{Continuous systems}
+If there exists a $P > 0$ satisfying
+\begin{equation}
+  A\tp P + PA < 0,
+\end{equation}
+then the system $\dot{x} = Ax$ is globally asymptotically stable.
+
+\paragraph{Discrete-time systems}
+If there exists a $P > 0$ satisfying
+\begin{equation}
+  A\tp P A - P < 0,
+\end{equation}
+then the system $x_{k+1} = Ax_k$ is globally asymptotically stable.

@@ -52,7 +52,7 @@ where $\hadamard$ is the entrywise product. Line by line, the KKT conditions can
 %
 The overall problem is then
 %
-\begin{equation}
+\begin{equation}\label{eq:bilevel-kkt}
   \begin{split}
     \min_{x,z,\lambda,\mu} f\sub{UL}(x,z) & \\
     G\sub{UI}(x,z) & \leq 0 \\
@@ -68,7 +68,7 @@ The overall problem is then
 which is solvable for smaller problems, using e.g. YALMIP.
 
 \subsection{Big-M notation}
-Big-M formulation replaces nonlinear complementarity constraints with linear constraints using binary variables $s \in \{0,1\}$ to indicate activeness for inequality constraints:
+Big-M formulation replaces nonlinear complementarity constraints\footnote{In \eqref{eq:bilevel-kkt}, the only complementarity constraint is $\lambda \hadamard G\sub{LI}(x,z) = 0$, because it is a product of two variables.} with linear constraints using binary variables $s \in \{0,1\}$ to indicate activeness for inequality constraints:
 %
 \begin{equation}\label{eq:big-M}
   \begin{split}
@@ -118,14 +118,16 @@ You can also remove known symmetries from symmetric problems by adding extra con
 The binary variables indicate which constraints are active, and some combinations of active constraints are known to be impossible. Linear constraints on the binary variables can remove these combinations from the search space.
 
 \subsubsection{Use small $M^u$/$M^\lambda$}
-For a correct analytical solution, $M^u$ and $M^\lambda$ must be sufficiently large. However, setting them too large gives numerical issues and an inaccurate solution. Choosing them is simpler by setting them diagonal and positive.
+For a correct analytical solution, $M^u$ and $M^\lambda$ must be sufficiently large. However, setting them too large gives numerical issues and an inaccurate solution.
 
 A good $M^u$ can sometimes be found by solving a series of LPs, if the LL constraints are bounded.
 
 $M^\lambda$ may need trial-and-error: If a value of $\lambda$ is constrained by $M^\lambda$, retry after increasing the corresponding element of $M^\lambda$.
 
+This is made easier by setting $M^u$/$M^\lambda$ diagonal and positive.
+
 \subsection{Approximate explicit MPC}
-Explicit MPC means to solve the optimization problems offline, so that the solution can be calculated easily and explicitly online. Bilevel optimization can be used for this.
+Explicit MPC means to solve the optimization problem of an MPC offline, so that the solution can be calculated quickly and explicitly online. Bilevel optimization can be used for this.
 %
 \begin{itemize}
   \item Find a set of points $V$ whose convex hull describes the feasible region of the MPC.
@@ -136,7 +138,7 @@ Explicit MPC means to solve the optimization problems offline, so that the solut
     u = K^i x + k^i,\quad x \in S_i
   \end{equation}
   which will be feasible and continuous.
-  \item Further subdivide triangulation if $|u-u\sub{optimal}|$ too large or stability cannot be proven.
+  \item Further subdivide triangulation if $\norm{u_0 - u}$ too large or stability cannot be proven.
   \begin{itemize}
     \item Can check difference from optimal input by solving a bilevel program for each simplex.
     \item If the error is too large, create a new point where the error is greatest.

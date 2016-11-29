@@ -1,7 +1,10 @@
 %!TEX root = ../TTK18-Summary.tex
 \section{Sum of squares programming}
-SoS decomposition can prove non-negativity of polynomials, and can be used for control analysis and design for polynomial nonlinear systems.
+SoS decomposition can prove non-negativity of polynomials. This can be used for control analysis and design for polynomial nonlinear systems.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% SUBSECTION %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Polynomials and monomials}
 A (multivariate) polynomial is
 %
@@ -16,10 +19,13 @@ and a monomial is one term in a polynomial, without the coefficient:
   m_k(x) = x_1^{a_{k1}} \dots x_n^{a_{kn}}.
 \end{equation}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% SUBSECTION %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Sum of squares decomposition}
 A \emph{polynomial} $f(x)$ is a SoS if it can be written as a sum of squares (lol):
 %
-\begin{equation}
+\begin{equation}\label{eq:sos-decomp}
   f(x) =
   \sum_{i=1}^N h_i^2(x) =
   \sum_{i=1}^N \left(q_i\tp v(x)\right)^2 =
@@ -36,14 +42,21 @@ A symmetric \emph{polynomial matrix} $M(x)$ is an SoS matrix if it can be writte
 %
 for some polynomial matrix $H(x)$.
 
-Note: There exists nonnegative polynomials that have to SoS decomposition. SoS decompositions are only guaranteed for nonnegative polynomials
+%%%%%%%%%%%%%%%%%%%%%% SUBSUBSECTION %%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Existence of SoS decomposition}
+An SoS decomposition is a sufficient condition for non-negativity of a polynomial. Thus, some non-negative polynomials don't have an SoS decomposition.
+
+The existence of an SoS decomposition is only guaranteed for these nonnegative polynomials:
+%
 \begin{itemize}
   \item in two variables,
   \item in quadratic forms, or
   \item in three variables and of fourth order.
 \end{itemize}
 
-Note 2: A polynomial may have more than one SoS decomposition, such as these:
+%%%%%%%%%%%%%%%%%%%%%% SUBSUBSECTION %%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Uniqueness of SoS decompositions}
+The matrix $Q$ in \eqref{eq:sos-decomp} and thus the SoS decomposition is not unique, because the elements of $v(x)$ are not independent:
 %
 \begin{equation}
   \underbrace{2x_1^4 + 2x_1^3x_2 - x_1^2x_2^2 + 5x_2^4}_{f(x)}
@@ -67,22 +80,28 @@ We have $\det(Q_1) = -15$, and therefore $Q_1 \ngeq 0$. Therefore, $Q_1$ does no
 
 It turns out that in general the set of parameters that make a symmetric matrix $Q \geq 0$ is convex when it depends linearly on its parameters, and thus SoS constraints are convex.
 
-\subsubsection{Numerical issues}
+%%%%%%%%%%%%%%%%%%%%%% SUBSUBSECTION %%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Solving}
+SoS constraints are usually convex, and can be formulated as a convex semi-definite program. Can be solved with e.g. YALMIP or SOSTOOLS.
+
 Sometimes $Q$ is very ill-conditioned, with tiny eigenvalues. Can be improved by
 \begin{itemize}
-  \item removing unused elements of $v(x)$
+  \item removing unused monomials from $v(x)$
   \item making $Q$ block-diagonal,
   \item altering $Q$ based on an initial solution,
   \item using software that pre- and post-processes automatically.
 \end{itemize}
 
-\subsubsection{Proof of positivity}
+%%%%%%%%%%%%%%%%%%%%%% SUBSUBSECTION %%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Validity of solution}
 Primal SoS optimization always yields a P.D. $Q$, but the solution may be so inaccurate that the polynomial is still not SoS. With
 %
 \begin{gather}
-    \lambda_{\min}(Q) = \min \eig(Q) \\
-    v(x) \in \mathbb{R}^M \\
-    r = f(x) - v\tp(x) Q v(x)
+  \begin{split}
+    \lambda_{\min}(Q) &= \min \eig(Q) \\
+    v(x) &\in \mathbb{R}^M \\
+    r &= f(x) - v\tp(x) Q v(x)
+  \end{split}
 \end{gather}
 %
 we can guarantee positivity of $f(x)$ given
@@ -96,19 +115,25 @@ we can guarantee positivity of $f(x)$ given
 
 Sometimes, a dual solver will find a valid solution that the primal does not find.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% SUBSECTION %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{LMIs and SoS}
 SoS problems are a special case of LMIs, but only some LMI ``tricks'' can be applied to SoSs:
 
+%%%%%%%%%%%%%%%%%%%%%% SUBSUBSECTION %%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Linearizing change of variables}
 If a problem depends linearly on $P>0$ and $PK$ (no standalone $K$s), then we can use $L = PK$ to make the problem linear in $L$ and $P$.
 
+%%%%%%%%%%%%%%%%%%%%%% SUBSUBSECTION %%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Congruence transform}
-For matrix SoSs with $M(x) \geq 0$ and a full rank $W(x)$:
+For a matrix SoS with $M(x) \geq 0$ and a full rank $W(x)$:
 \begin{equation}
-  M(x) \geq 0 \Leftrightarrow W\tp(x) M(x) W(x) \geq 0
+  M(x) \geq 0 \quad \Leftrightarrow \quad W\tp(x) M(x) W(x) \geq 0
 \end{equation}
 Note: Cannot be used with scalarized Schur complement.
 
+%%%%%%%%%%%%%%%%%%%%%% SUBSUBSECTION %%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Scalarization}
 For an LMI, positive definiteness has the relation
 %
@@ -124,6 +149,7 @@ while for an SoS it is instead
 %
 As it turns out, it's better to formulate scalar-valued SoS problems.
 
+%%%%%%%%%%%%%%%%%%%%%% SUBSUBSECTION %%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Scalarized Schur complement}
 With
 %
@@ -134,15 +160,15 @@ With
 then
 %
 \begin{equation}
-  \bsmat{x \\ z}\tp M(x) \bsmat{x \\ z} > 0,\quad \forall\{x,z\} \neq \{0,0\}
+  \bmat{x \\ z}\tp M(x) \bmat{x \\ z} > 0 \quad \forall\{x,z\} \neq \{0,0\}
 \end{equation}
 %
-is equivalent to
+is equivalent to (all matrices are functions of $x$)
 %
 \begin{equation}
   \begin{split}
-    x\tp \left( E - F\tp P\inv F \right) x &> 0,\quad \forall x \neq 0 \\
-    z\tp P z &> 0,\quad \forall z \neq 0, \forall x
+    x\tp \left( E - F\tp P\inv F \right) x &> 0 \quad \forall x \neq 0 \\
+    z\tp P z &> 0 \quad \forall z \neq 0, \forall x
   \end{split}
 \end{equation}
 %
@@ -155,6 +181,8 @@ because of
   \bmat{I & 0 \\ P\inv F & I}.
 \end{equation}
 
+%%%%%%%%%%%%%%%%%%%%%% SUBSUBSECTION %%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Scalarized Schur product}
 If we have
 %
 \begin{equation}
@@ -163,8 +191,9 @@ If we have
   \bmat{x \\ z}
 \end{equation}
 %
-then $w$ can take any value regardless of $x$, by choosing $z$, and $z$ can take any value by choosing $w$.
+then $w$ can take any value regardless of $x$, by choosing $z$. The same applies in reverse: $z$ can take any value regardless of $x$, by choosing $w$.
 
+%%%%%%%%%%%%%%%%%%%%%% SUBSUBSECTION %%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{S-procedure}
 We want to prove $f(x) > 0$ when $g(x) < 0$. Can be written
 %
@@ -172,8 +201,11 @@ We want to prove $f(x) > 0$ when $g(x) < 0$. Can be written
   f(x) + s(x) g(x) > 0
 \end{equation}
 %
-for a arbitrary SoS polynomial $s(x)$. With this formulation, optimizing over parameters in $s(x)$ and $g(x)$ gives a bilinear problem.
+for an arbitrary SoS polynomial $s(x)$. With this formulation, optimizing over parameters in $s(x)$ and $g(x)$ gives a bilinear (nonconvex) problem.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% SUBSECTION %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Bilinear discrete systems}
 The bilinear\footnote{Bilinear because the next state is a function with a term that is a product of the state and the input. In a linear system, the $B_x$ term would not be present.} system
 %
@@ -205,6 +237,7 @@ If the system is open-loop unstable, $u_k(x_k)$ must be a ratio of same-order po
 %
 where $C(x_k)$ is a polynomial matrix and $c_0(x_k)$ is an SoS polynomial.
 
+%%%%%%%%%%%%%%%%%%%%%% SUBSUBSECTION %%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Region of convergence}
 With a quadratic LF $V(x_k) = x_k\tp P x_k$, a polynomial matrix $C(x_k)$, and SoS polynomials $c_0(x_k)$, $s_1(x_k,z)$, then the closed loop system is stable for all $x_k | x_k\tp P x_k < \gamma$ given
 %
@@ -228,6 +261,7 @@ where (omitting arguments for brevity)
 %
 which comes from $(c_0 + 1)$ being strictly positive, and using the scalarized Schur complement and the S-procedure.
 
+%%%%%%%%%%%%%%%%%%%%%% SUBSUBSECTION %%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Input saturation}
 The input constraints
 %
@@ -248,6 +282,7 @@ where
 %
 $c_i(x_k)$ are rows of $C(x_k)$, and $c_0(x_k)$ and $q_i(x_k)$ are SoS polynomials.
 
+%%%%%%%%%%%%%%%%%%%%%% SUBSUBSECTION %%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Rate of convergence}
 We can change $M(x)$ from \eqref{eq:polynomial-matrix-convergence} to
 \begin{equation}
@@ -257,8 +292,9 @@ We can change $M(x)$ from \eqref{eq:polynomial-matrix-convergence} to
     P \big( (c_0 + 1)A + (B_x + B)C \big) & (c_0 + 1)P
   \end{bmatrix}
 \end{equation}
-to guarantee an exponential convergence defined by $\alpha$. There will be a tradeoff between maximizing the region of convergence and rate of convergence. Using this $M(x)$ allows us to determine the tradeoff.
+to guarantee an exponential convergence rate defined by $\alpha$. There will be a tradeoff between maximizing the region of convergence and rate of convergence. Using this $M(x)$ allows us to determine the tradeoff.
 
+%%%%%%%%%%%%%%%%%%%%%% SUBSUBSECTION %%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Optimization formulation}
 \begin{enumerate}
   \item If $\alpha$, $\gamma$, and $P$ are known, then $C$, $c_0$, $q_i$, $s_1$ enter linearly into inequalities above, and they can be solved as is.
