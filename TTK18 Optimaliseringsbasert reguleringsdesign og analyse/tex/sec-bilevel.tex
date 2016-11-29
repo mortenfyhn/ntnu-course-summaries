@@ -30,7 +30,7 @@ Then we can replace the LL problem with its KKT conditions. The Lagrangian funct
 %
 and the KKT conditions are
 %
-\begin{equation}
+\begin{equation}\label{eq:kkt-lower-level}
   \begin{split}
     \nabla_z \mathcal{L}(x,z,\lambda,\mu) &= 0 \\
     G\sub{LI}(x,z) &\leq 0 \\
@@ -68,7 +68,7 @@ The overall problem is then
 which is solvable for smaller problems, using e.g. YALMIP.
 
 \subsection{Big-M notation}
-Big-M formulation replaces nonlinear complementarity constraints\footnote{In \eqref{eq:bilevel-kkt}, the only complementarity constraint is $\lambda \hadamard G\sub{LI}(x,z) = 0$, because it is a product of two variables.} with linear constraints using binary variables $s \in \{0,1\}$ to indicate activeness for inequality constraints:
+Big-M formulation replaces nonlinear complementarity constraints\footnote{In \eqref{eq:kkt-lower-level} and \eqref{eq:bilevel-kkt}, the complementarity constraint is $\lambda \hadamard G\sub{LI}(x,z) = 0$, because it is a product of two variables.} with linear constraints using binary variables $s \in \{0,1\}$ to indicate activeness for inequality constraints:
 %
 \begin{equation}\label{eq:big-M}
   \begin{split}
