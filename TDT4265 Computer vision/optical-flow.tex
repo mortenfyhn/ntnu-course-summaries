@@ -1,0 +1,31 @@
+%!TEX root = TDT4265-Summary.tex
+\section{Optical flow}
+Optical flow is the task of describing how pixels move in an image, thus describing motion of surfaces or objects in an image. Mathematically, you calculate the motion at each pixel position between two frames at times $t$ and $t + \Delta t$.
+
+\subsection{Constraints}
+We usually assume constant brightness between frames
+\begin{equation}
+    I(x,y,t) = I(x + \Delta x, y + \Delta y, t + \Delta t)
+\end{equation}
+where $I(\cdot)$ is image intensity. We also assume small motion
+\begin{multline}
+    I(x + \Delta x, y + \Delta y, t + \Delta t) =\\
+    I(x,y,z) + \pd{I}{x}\Delta x + \pd{I}{y}\Delta y + \pd{I}{t} \Delta t.
+\end{multline}
+This gives
+\begin{equation}
+    \pd{I}{x} V_x + \pd{I}{y} V_y + \pd{I}{t} = 0.
+\end{equation}
+
+Determining optical flow can be done in several ways. Sections \ref{ssec:lucas-kanade} and \ref{ssec:horn-schunck} describe differential methods.
+
+\paragraph{Aperture problem} The aperture problem comes from the fact that what a camera sees is only a small part of the world. Motion inside of this frame may appear different than it really is, if the moving object is not contained in the frame.
+
+\subsection{Lucas--Kanade (LK) method}\label{ssec:lucas-kanade}
+LK tracks interest points in a scene from one frame to the next. Can use Harris corner points as the interest points. It assumes constant flow in a neighborhood of the pixel examined, and solves the optical flow equations by least squares. Using a neighborhood reduces ambiguities and improves noise performance. But being purely local, it cannot determine flow in the interior of uniform regions.
+
+\subsection{Horn--Schunck (HS) method}\label{ssec:horn-schunck}
+A method to estimate optical flow globally. It introduces a global smoothness constraint to solve the aperture problem. It minimizes distortion in flow globally, and prefers solutions that are smoother.
+
+\subsection{Kanade--Lucas-Tomasi (KLT) feature tracker}\label{ssec:kanade-lucas-tomasi}
+KLT is a computationally fast feature extraction method that is useful for tracking in realtime video.

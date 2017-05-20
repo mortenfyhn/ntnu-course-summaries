@@ -1,0 +1,148 @@
+%!TEX root = TDT4265-Summary.tex
+\section{Spatial filtering}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Fundamentals of spatial filtering}
+
+\subsubsection{Mechanics of spatial filtering}
+A spatial filter consists of a neighborhood and an operation performed on the pixels in the neighborhood. A \emph{linear filter} requires a linear operation, such as summation. Otherwise, it is a \emph{nonlinear filter}.
+
+\subsubsection{Spatial correlation and convolution}
+Neighborhood operations where each output pixel is a weighted sum of neighbors to the corresponding input pixel. The weights are stored in a matrix called filter, mask or kernel. Correlation and convolution are the same except for the fact that the filter is rotated $180 \degree$ for convolution.
+
+If the input image is a discrete unit impulse (all zeros except a single `1' value), the output of convolution is the filter itself at the position of the unit impulse. Correlation has the same result, but the output is rotated 180 degrees. Convolution is commutative and associative:
+\begin{gather}
+    f \conv g = g \conv f \\
+    f \conv (g \conv h) = (f \conv g) \conv h
+\end{gather}
+However, correlation is \emph{not}.
+
+Because of the similarity of the operations, often only \eqref{eq:corr} is implemented, and the filter is rotated beforehand for convolution.
+
+\paragraph{Correlation}
+\begin{equation}\label{eq:corr}
+    w(x,y) \corr f(x,y)
+    =
+    \sum_{s=-a}^{a}
+    \sum_{t=-b}^{b}
+    w(s,t) f(x+s, y+t)
+\end{equation}
+
+\paragraph{Convolution}
+\begin{equation}\label{eq:conv}
+    w(x,y) \conv f(x,y)
+    =
+    \sum_{s=-a}^{a}
+    \sum_{t=-b}^{b}
+    w(s,t) f(x-s, y-t)
+\end{equation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Smoothing spatial filters}
+Used for blurring and noise reduction. Blurring can e.g. remove small, unwanted details before object detection.
+
+Smoothing linear filters take an average of pixels under the mask. Also called averaging or lowpass filters. A typical filter is
+\begin{equation}
+    \frac{1}{9}
+    \cdot
+    \begin{BMAT}(e){|c|c|c|}{|c|c|c|}
+        1 & 1 & 1 \\
+        1 & 1 & 1 \\
+        1 & 1 & 1
+    \end{BMAT}
+    \, .
+\end{equation}
+Such filters where all coefficients are equal are called box filters. Another possibility is a weighted average such as
+\begin{equation}
+    \frac{1}{16}
+    \cdot
+    \begin{BMAT}(e){|c|c|c|}{|c|c|c|}
+        1 & 2 & 1 \\
+        2 & 4 & 2 \\
+        1 & 2 & 1
+    \end{BMAT}
+    \, ,
+\end{equation}
+which can smooth an image with less blurring than a box filter.
+
+\subsubsection{Median filter}
+A nonlinear filter, good for removing e.g. salt-and-pepper noise. Does not blur sharp edges. Method:
+\begin{enumerate}
+    \item Order pixels in the neighborhood by intensity.
+    \item Replace center pixel with median intensity.
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Sharpening spatial filters}
+
+Just like smoothing/averaging is analogous to integration, sharpening can be done by differentiation. Some requirements for a sharpening filter based on the first derivative are
+\begin{itemize}
+    \item zero in constant areas,
+    \item nonzero at the onset and end of an intensity ramp, and
+    \item nonzero during an intensity ramp.
+\end{itemize}
+Requirements for a secord-order derivative filter are the same, with the difference that it must be zero during ramps. The one-dimensional definitions
+\begin{equation}
+\begin{split}
+    \pd{f}{x}    &= f(x+1) - f(x) \\
+    \pd[2]{f}{x} &= f(x+1) + f(x-1) - 2f(x)
+\end{split}
+\end{equation}
+satisfy these requirements.
+
+\subsubsection{Image sharpening with the Laplacian}
+For 2D images, sharpening filters can be based on the Laplacian
+\begin{equation}
+    \nabla^2 f = \pd[2]{f}{x} + \pd[2]{f}{y} .
+\end{equation}
+
+Some common filters are:
+\begin{equation}\label{eq:laplacian-filters}
+    \begin{BMAT}(e){|c|c|c|}{|c|c|c|}
+        0 &  1 & 0 \\
+        1 & -4 & 1 \\
+        0 &  1 & 0
+    \end{BMAT}
+    \quad
+    \begin{BMAT}(e){|c|c|c|}{|c|c|c|}
+        1 &  1 & 1 \\
+        1 & -8 & 1 \\
+        1 &  1 & 1
+    \end{BMAT}
+    \quad
+    \begin{BMAT}(e){|c|c|c|}{|c|c|c|}
+         0 & -1 &  0 \\
+        -1 &  4 & -1 \\
+         0 & -1 &  0
+    \end{BMAT}
+    \quad
+    \begin{BMAT}(e){|c|c|c|}{|c|c|c|}
+        -1 & -1 & -1 \\
+        -1 &  8 & -1 \\
+        -1 & -1 & -1
+    \end{BMAT}
+\end{equation}
+
+The sharpened image is obtained by taking the sum of the original and the filtered image:
+\begin{equation}
+    g(x,y) = f(x,y) + c [\nabla^2 f(x,y)]
+\end{equation}
+where $c$ is $-1$ if the center element of the filter is negative, and $1$ otherwise.
+
+\subsubsection{Unsharp masking and highboost filtering}\label{sssec:unsharp-highboost-spatial}
+Unsharp masking sort of goes in the opposite direction of Laplacian sharpening: First blur the image, and subtract the blurred from the original to get a an unsharp mask $g\sub{mask}(x,y) = f(x,y) - \overline{f}(x,y)$. Finally add the mask to the original:
+\begin{equation}\label{eq:unsharp-masking}
+    g(x,y) = f(x,y) + k \cdot g\sub{mask}(x,y)
+\end{equation}
+Unsharp masking is strictly speaking only for $k = 1$. With $k > 1$, we have highboost filtering, and you can also lessen the effect with $k < 1$. The result is a sharpened image, because you remove unsharpness, which increases corner contrast.
+
+\subsubsection{Image sharpening with the Gradient}
+Section \ref{sssec:edge-detection} defines the gradient. Its magnitude
+\begin{equation}
+    M(x,y) = \sqrt{g_x^2 + g_y^2} \approx \abs{g_x} + \abs{g_y}
+\end{equation}
+forms a gradient magnitude image. An example of masks that approximate this is the Sobel operator \eqref{eq:sobel}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection[Combining methods]{Combining spatial enhancement methods}
+In the real world, you need to use several methods to solve a task. One example is to first sharpen the image, then enhance the dynamic range.
