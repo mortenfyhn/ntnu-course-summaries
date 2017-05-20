@@ -1,0 +1,239 @@
+%!TEX root = TDT4265-Summary.tex
+\section{Image segmentation}\label{sec:segmentation}
+Segmentation divides an image into the regions or objects it consists of. Most algorithms here are based on intensity discontinuity and similarity.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Fundamentals}\label{ssec:segmentation-fundamentals}
+We pretty much just divide an image $R$ into $n$ regions $R_1 \dots R_n$, and require the following to hold:
+\begin{itemize}
+    \item The union of all regions is equal to the whole image.
+    \item Each region is a connected set.
+    \item Each region is disjoint from the others.
+    \item Some predicate\footnote{A predicate can be e.g. the that the intensity of each pixel is in a certain range.} is true for each region separately.
+    \item The predicate is false for the union of any adjacent regions.
+\end{itemize}
+
+Segmentation is either edge-based or region-based.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Point, line, and edge detection}\label{ssec:edge-detection}
+These methods detect sharp, local changes in intensity. First- and second-order derivatives are used, and can detect intensity ramps, isolated points, and steps. Simple spatial filters can realize 1st and 2nd derivatives.
+
+\subsubsection{Point detection}
+Points can be detected by a 2nd derivative mask and thresholding. (If the absolute value of the output of a 2nd derivative mask is above a threshold, that pixel is marked as a point.) A suitable mask for this is
+\begin{equation}\label{eq:2nd-derivative-mask}
+    \begin{BMAT}(e){|c|c|c|}{|c|c|c|}
+        1 &  1 & 1 \\
+        1 & -8 & 1 \\
+        1 &  1 & 1
+    \end{BMAT}.
+\end{equation}
+
+\subsubsection{Line detection}
+The same mask \eqref{eq:2nd-derivative-mask} can be used. However, this mask gives a double line effect---negative values on one side of the line and positive on the other. This can be avoided by only keeping the positive-valued pixels. Note that lines must be thin compared to the mask in order to be detected as lines. Fat lines should be treated as regions.
+
+\eqref{eq:2nd-derivative-mask} is independent of line direction. Other masks can be used to detect lines in specified directions.
+
+\subsubsection{Edge models}
+Edges can be steps (sudden change), ramps (gradual change), or roofs (gradual increase followed by gradual decrease).
+
+The magnitude of the 1st derivative can indicate an edge, and the sign of the 2nd derivative reveals if you are on the bright or dark side of it. Because this is done with derivatives, noisy edges are problematic.
+
+\subsubsection{Basic edge detection}\label{sssec:edge-detection}
+The image gradient is
+\begin{equation}
+    \nabla f = \mathrm{grad}(f)
+    =
+    \begin{bmatrix} g_x \\ g_y \end{bmatrix}
+    =
+    \begin{bmatrix} \pd{f}{x} \\[6pt] \pd{f}{y} \end{bmatrix}.
+\end{equation}
+The magnitude is the value of the rate of change in the direction of the gradient (steepness of the ramp). The direction of $\nabla f$ is
+\begin{equation}
+    \alpha(x,y) = \arctan \left( \frac{g_y}{g_x} \right).
+\end{equation}
+This is the direction of the steepest ascent, and is therefore orthogonal to the edge.
+
+A often used and pretty good gradient mask is the Sobel operator
+\begin{equation}\label{eq:sobel}
+    \begin{BMAT}(e){|c|c|c|}{|c|c|c|}
+        -1 & -2 & -1 \\
+         0 &  0 &  0 \\
+         1 &  2 & 1
+    \end{BMAT}
+    \text{ and }
+    \begin{BMAT}(e){|c|c|c|}{|c|c|c|}
+        -1 & 0 & 1 \\
+        -2 & 0 & 2 \\
+        -1 & 0 & 1
+    \end{BMAT}.
+\end{equation}
+These two masks can detect vertical and horizontal edges, respectively. The same operator but with ones instead of twos is called the Prewitt operator. However, the $\pm 2$-elements give some smoothing, which is good as derivatives are sensitive to noise. Sobel and Prewitt masks can also be rotated $45 \degree$ to detect diagonal edges.
+
+To maintain connectivity of edges and highlight the strongest edges, you must smoothe the image first, then extract edges, then threshold it.
+
+\subsubsection{More advanced edge detection}\label{sssec:adv-edge-detection}
+These methods worry more about noise and the nature of edges.
+
+\paragraph{The Marr-Hildreth edge detector (Laplacian of Gaussian)} This method uses masks of variant scales to detect edges of variant sharpness. The filter is the Laplacian of the Gaussian (LoG):
+\begin{equation}
+    \nabla^2 G(x,y)
+    =
+    \left[
+        \frac{x^2 + y^2 - 2 \sigma^2}{\sigma^4}
+    \right]
+    \euler^{-\frac{x^2 + y^2}{2 \sigma^2}}
+\end{equation}
+This formula can be used to create LoG masks of any size. The Gaussian part $G$ blurs the image without ringing. The Laplacian part $\nabla^2$ is used to detect edges because it is isotropic\footnote{Invariant to rotation.}, as opposed to the 1st derivative. In reality, Marr-Hildreth edge detection is done by
+\begin{enumerate}
+    \item Filter image with a Gaussian lowpass filter.
+    \item Compute the Laplacian of the image.
+    \item Find the zero-crossings.
+\end{enumerate}
+
+Note that it is usually better to use a small positive threshold for zero-crossing. This removes a lot of ``noisy'' edges. Also note that the LoG can be approximated with a difference of Gaussian (DoG) operator.
+
+\paragraph{The Canny edge detector} The Canny edge detector is an attempt to
+\begin{enumerate}
+    \item find all edges without false positives,
+    \item locate edge points near the true edge, and
+    \item return edges only one pixel wide.
+\end{enumerate}
+This is fairly well achieved by the following:
+\begin{enumerate}
+    \item Smooth the image with a Gaussian filter.
+    \item Compute gradient magnitude and gradient angle images (using e.g. Sobel).
+    \item Apply nonmaxima suppression to the gradient magnitude image.
+    \item Detect and link edges with double thresholding and connectivity analysis.
+    \item (Optional.) Use edge thinning to make sure all edges are one pixel wide.
+\end{enumerate}
+
+Canny is generally better than Marr-Hildreth/LoG, but more complex and computationally heavy.
+
+\paragraph{Edge linking and boundary detection} Done with local processing, regional processing, or global processing with the Hough transform.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Corner detection}
+The dominant method for corner detection is the Harris corner detector.
+
+\subsubsection{Harris corner detector}
+Define a box of some size to move around the image and look for corners inside of. For each location, calculate gradients in $x$ and $y$ directions. In a flat area, the gradients will all be close to zero. Edges and corners give different non-zero responses. This can be quantified by
+\begin{equation}
+    M = \sum_{(x,y) \in W}
+    \begin{bmatrix}
+        I_x^2   & I_x I_y \\
+        I_x I_y & I_y^2
+    \end{bmatrix}
+\end{equation}
+where $I_x$ and $I_y$ are gradients in the $x$ and $y$ directions. $W$ is the window we are looking for corners in. We can then use the Harris corner response function
+\begin{equation}
+    R = \det(M) - \alpha \trace(M)^2 = \lambda_1 \lambda_2 - \alpha (\lambda_1 + \lambda_2)^2
+\end{equation}
+to assume features:
+\begin{center}
+\begin{tabular}{lll}
+    Response function & Eigenvalues & Feature found \\
+    \hline
+    $R > 0$           & Both large  & Corner        \\
+    $R < 0$           & One large   & Edge          \\
+    $\abs{R}$ small   & Both small  & Flat area
+\end{tabular}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Thresholding}
+Thresholding is an attempt to separate the image into object points and background points. It can be done globally (same threshold value everywhere) or variably (different value in different areas). Sometimes multiple thresholding is done, to separate the image into more than two parts.
+
+Thresholding is made harder by noise, and uneven illumination/reflectance. Remedies are direct correction of shading pattern, top-hat transformation (Paragraph \ref{par:top-hat}), and variable thresholding.
+
+\subsubsection{Basic global thresholding}
+Easy, but we need a way to select the threshold automatically:
+\begin{enumerate}
+    \item Select initial threshold $T$.
+    \item Segment image with $T$.
+    \item Compute mean intensities $m_1$ and $m_2$ of the two groups.
+    \item Compute new threshold $T = \frac{1}{2}(m_1 + m_2)$.
+    \item Repeat until convergence.
+\end{enumerate}
+This works well when there is a clear valley in the histogram.
+
+\subsubsection{Otsu's method}
+Otsu's method is based on maximizing between-class variance:
+\begin{enumerate}
+    \item Compute normalized histogram $p_0 \dots p_{L-1}$.
+    \item Compute cumulative sums $P_1(0) \dots P_1(L-1)$.
+    \item Compute cumulative means $m(0) \dots m(L-1)$.
+    \item Compute global intensity mean $m_G$.
+    \item Compute between-class variance $\sigma_B^2(0) \dots \sigma_B^2(L-1)$.
+    \item Obtain Otsu threshold $k^* = \argmax_k \sigma_B^2(k)$.
+    \item Obtain separability measure $\eta^*$.
+\end{enumerate}
+
+\subsubsection{Improving global thresholding with smoothing}
+Even with Otsu's, noise can make thresholding fail completely. Smoothing the image first can often make it succeed again, although heavy smoothing can distort the edges.
+
+\subsubsection{Improving global thresholding with edges}
+In some cases, such as with noisy images where the object is very small compared to the background, edge detection-based thresholding is useful.
+\begin{enumerate}
+    \item Compute an edge image with some method from Section \ref{ssec:edge-detection}.
+    \item Set a threshold $T$.
+    \item Threshold the edge image.
+    \item Compute a histogram of only the pixels in the original that are 1-valued in the edge image.
+    \item Segment this histogram globally, with e.g. Otsu.
+\end{enumerate}
+
+\subsubsection{Multiple thresholds}
+Sometimes you want to segment an image into three groups of intensity values, which is done with two thresholds. (More than two thresholds usually consider other properties than intensity.) A modification of Otsu exists for dual thresholds.
+
+\subsubsection{Variable thresholding}
+
+\paragraph{Image partitioning} Partition the image into smaller images, and threshold each part separately. Sufficiently small parts should make, say, uneven illumination appear fairly even within the part.
+
+\paragraph{Thresholding based on local properties} Threshold based on a predicate of the neighborhood. If a function $Q$ of pixels near the current is true, mark that pixel a 1.
+
+\paragraph{Moving average} Good for stuff such as images of text with uneven illumination. As long as the text stands out from the local background, it's marked a 1. Global thresholding will fail in such situations.
+
+\subsubsection{Multivariable thresholding}
+With color images, we might want to do thresholding based on more variables than greyscale intensity. An example is the ``distance'' from a pixel in the image to a given color, such as only keeping pixels that are sufficiently red.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Region-based segmentation}
+Instead of finding edges or doing thresholding, let's just find the regions directly.
+
+\subsubsection{Region growing}
+Start with a ``seed'' of points, and grow these into regions:
+\begin{enumerate}
+    \item Erode connected components of the seeds to single pixels.
+    \item Compute a predicate image with ones for all pixels that satisfy the predicate.
+    \item Append to the seed points all ones from the predicate image that are 8-connected to the seed.
+    \item Label each disjoint region.
+\end{enumerate}
+
+\subsubsection{Region splitting and merging}
+Based on splitting the image into sections and merging them to satisfy the list in Section \ref{ssec:segmentation-fundamentals}. One method is to divide the image into quadrants, and for each quadrant that fails a predicate, divide it further. Afterwards, adjacent regions that fulfill the predicate are merged.
+
+\subsubsection{$k$-means clustering}
+$k$-means clustering is a method that can be used to segment an image into $k$ categories based on some vector of quantitative features (such as color levels). The algorithm is
+\begin{enumerate}
+    \item In the space of all possible feature vectors, initialize the centers of $k$ categories randomly.
+    \item Assign each pixel to the nearest category.
+    \item Based on the pixels assigned to each category, compute the centroid of their feature vectors as the new category centroids.
+    \item Repeat until convergence.
+\end{enumerate}
+This method
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Morphological watersheds}
+We look at the image in a topographic way, letting intensity levels represent heights. Then ``fill'' the image by rising water from below. Notice which areas fill separately, and where the water connects when the level is high enough.
+
+As the water fills, build pixel-wide dams to keep the basins from connecting. These dams define the segmentation boundaries between regions. Noise and irregularities lead to oversegmentation. You can preprocess to generate markers, which are the only allowable starting points for the water filling, in order to reduce this.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Using motion for segmentation}
+It can be useful to detect regions by looking at movement.
+
+\subsubsection{Spatial techniques}
+A very simple method is to look at pixel-level differences: Make a difference image of ones for all pixels that have changed significantly. To suppress noise, you can form 4- or 8-connected regions in the difference image and ignore too small regions.
+
+Another method is accumulative differences: Increment a counter for a given pixel when a significant change occurs there.
+
+For these methods to work, we need a good reference image. The best is one with only stationary elements. If you cannot capture a stationary image directly, it can be constructed from several images.

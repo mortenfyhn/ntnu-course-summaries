@@ -1,0 +1,58 @@
+\documentclass[12pt,twocolumn]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[hidelinks]{hyperref}
+\usepackage{libertine}
+\usepackage[libertine]{newtxmath}
+\usepackage[subfigure]{tocloft}
+\usepackage{subfigure}
+\usepackage{graphicx}
+\usepackage{commath}
+\usepackage{mortenmath}
+\usepackage[thinlines]{easybmat}
+\usepackage[top=24pt, bottom=48pt, left=24pt, right=24pt]{geometry}
+\usepackage{enumitem}
+
+\setlist{nosep}
+\setlength{\columnsep}{24pt}
+\setlength{\cftparskip}{0pt}
+\setlength{\cftbeforesecskip}{0pt}
+\setcounter{tocdepth}{1}
+\input{glyphtounicode}
+\pdfgentounicode=1
+
+\newcommand*{\erode}{\ominus}     % Erosion
+\newcommand*{\dilate}{\oplus}     % Dilation
+\newcommand*{\open}{\circ}        % Opening
+\newcommand*{\close}{\bullet}     % Closing
+\newcommand*{\match}{\circledast} % Matching
+\newcommand*{\thin}{\otimes}      % Thinning
+\newcommand*{\thick}{\odot}       % Thickening
+
+% Shorthand for some commonly used vectors
+\newcommand*{\x}{\V{x}}
+\newcommand*{\y}{\V{y}}
+\newcommand*{\m}{\V{m}}
+\newcommand*{\e}{\V{e}}
+
+\title{Summary of TDT4265 Computer Vision}
+\author{Morten Fyhn Amundsen}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\input{03a-intensity-transformations}
+\input{03b-spatial-filtering}
+\input{04-filtering-in-the-frequency-domain}
+\input{09-morphological-image-processing}
+\input{10-image-segmentation}
+\input{11-representation-and-description}
+\input{12-object-recognition}
+\input{epipolar-geometry}
+\input{optical-flow}
+
+\end{document}

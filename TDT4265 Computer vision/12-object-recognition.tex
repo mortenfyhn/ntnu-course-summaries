@@ -1,0 +1,45 @@
+%!TEX root = TDT4265-Summary.tex
+\section{Object recognition}
+Object recognition is the task of finding a specific object within an image.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Patterns and pattern classes}
+Patterns are arrangements of descriptors (or ``features''). Pattern recognition is assigning observed patterns to a pattern class. Usually patterns are represented as vectors (quantitative), strings, or trees (structural). When using pattern vectors, the choice of descriptors is super important.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection[Decision-theoretic methods]{Recognition based on decision-theoretic methods}
+Based on decision functions. For pattern classes $\omega_1, \dots, \omega_W$, we need functions $d_1(\x), \dots, d_W(\x)$, so that if $\x$ belongs in class $\omega_i$, then $d_i(\x)$ has the largest value. The decision boundary between two classes are values of $\x$ where two decision functions have the same value.
+
+\subsubsection{Matching}
+
+\paragraph{Minimum distance matching} This method matches candidate vectors $\x$ to prototype vectors $\m$ that represent each class. A candidate belongs to the class with the nearest prototype (``nearness'' measured with some vector norm).
+
+\paragraph{Correlation matching}
+Using a template, you can shift it around on an image to find out where it fits best (in the sense of maximum correlation). This can easily be normalized for intensity changes, but not so easily for size and rotation.
+
+\subsubsection{Optimum statistical classifiers}
+We can also formulate a classification that is optimal in the sense of minimizing classification errors.
+
+\subsubsection{Neural networks}
+Neural networks can be used to classify images and image components. More on this somewhere else.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Feature-based object recognition}
+This method depends on a lower-level method to extract features and interest points from images. These can then be matched between images to determine the location of an object. Usually your input is an image of the object alone, and an image of the object in a scene. The output is the location and orientation of the object within the scene. SIFT in Section \ref{ssec:sift} is one way to extract feature descriptors.
+
+\subsubsection{RANSAC}
+RANSAC (random sample consensus) is a method of outlier detection that can be used when matching feature vectors between images, to remove false matches. It goes like this:
+\begin{enumerate}
+    \item Repeat $N$ times:
+    \begin{enumerate}
+        \item Choose a subset $s \in S$ of points and fit your model to them.
+        \item See how many points in $S$ match the model.
+    \end{enumerate}
+    \item Choose the best fitting model as your result.
+\end{enumerate}
+Here, $S$ are all your data points. $s$ is a subset large enough to define your model (2 for a line, 8 for a fundamental matrix, etc.). $N$ is a predetermined number of iterations defined to guarantee a certain probability of finding a good model.
+
+RANSAC can do robust estimation (accurate estimation despite many outliers). However, it cannot guarantee with finite $N$ that it finds a good model, it can only guarantee it to a specified probability. It needs very many iterations for sets with many outliers, but variations exist to solve this. The number of iterations necessary to guarantee a good model with probability $p$, given outlier ratio $\epsilon$ is
+\begin{equation}
+    N = \frac{\log(1-p)}{\log(1-(1-\epsilon)^s)}.
+\end{equation}

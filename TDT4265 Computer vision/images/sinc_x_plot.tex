@@ -1,0 +1,21 @@
+\documentclass[tikz,border=3mm]{standalone}
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest}
+
+\begin{document}
+
+\begin{tikzpicture}
+    \begin{axis}
+    [
+        domain=-20:20,
+        xmin=-20, xmax=20,
+        ymin=-.3, ymax=1.1,
+        samples=200,
+        axis y line=center,
+        axis x line=middle,
+    ]
+        \addplot+[mark=none] {sin(x*(180/pi))/x};
+    \end{axis}
+\end{tikzpicture}
+
+\end{document}
