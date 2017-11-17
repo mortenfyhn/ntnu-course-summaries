@@ -1,0 +1,45 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{libertine}
+\usepackage[libertine]{newtxmath}
+\usepackage{microtype}
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[hidelinks]{hyperref}
+\usepackage{enumitem}
+  \setlist{nolistsep}
+\usepackage{commath}
+\usepackage{relsize}
+
+\setcounter{tocdepth}{1}
+
+\newcommand*{\sub}[1]{_\mathrm{#1}}
+\newcommand*{\tp}{^{\mathrm{\mathsmaller T}}}
+\newcommand{\bmat}[1]{\begin{bmatrix} #1 \end{bmatrix}}
+\newcommand{\bsmat}[1]{\begin{bsmallmatrix} #1 \end{bsmallmatrix}}
+\newcommand*{\inv}{^{-1}}
+
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\eig}{eig}
+% \DeclareMathOperator{\abs}{abs}
+\renewcommand*{\abs}{\operatorname{abs}} % Can't use DeclareMathOperator because of conflict with commath package
+\DeclareMathOperator{\trace}{trace}
+\DeclareMathOperator{\co}{Co}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\hadamard}{\odot}
+
+\title{Summary of TMA4120}
+\date{\today}
+\author{Aksel Lenes}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\input{tex/sec-analytic-function}
+
+\end{document}
