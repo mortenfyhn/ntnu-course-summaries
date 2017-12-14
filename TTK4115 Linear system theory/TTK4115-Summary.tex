@@ -37,9 +37,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Matrix stuff}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Nullity} $\nul(\M{A}) = \mbox{No. of columns of } \M{A} - \rank(\M{A})$
-\paragraph{Positive definite} A symmetric $n \times n$ real matrix $\M{M}$ is \emph{positive definite} if all its eigenvalues are positive. (Or if $\V{z}\transpose \M{M}\V{z} > 0$ for every non-zero vector $\V{z}$ of $n$ real numbers.) It is positive \emph{semidefinite} if all eigenvalues are positive or zero.
-\paragraph{Singularity} A square matrix is singular if it is not invertible, i.e. if its determinant is $0$.
+\paragraph{Nullity}
+$\nul(\M{A}) = \mbox{No. of columns of } \M{A} - \rank(\M{A})$
+
+\paragraph{Positive definite}
+A symmetric $n \times n$ real matrix $\M{M}$ is \emph{positive definite} if all its eigenvalues are positive. (Or if $\V{z}\transpose \M{M}\V{z} > 0$ for every non-zero vector $\V{z}$ of $n$ real numbers.) It is positive \emph{semidefinite} if all eigenvalues are positive or zero.
+
+\paragraph{Singularity}
+A square matrix is singular if it is not invertible, i.e. if its determinant is $0$.
+
 \paragraph{Matrix exponential (diagonal)}
 $$\M{A} =
 \begin{bmatrix}
@@ -54,17 +60,26 @@ e^{a_1t}	& \cdots	& 0			\\
 \vdots 		& \ddots	& \vdots	\\
 0			& \cdots	& e^{a_nt}	\\
 \end{bmatrix}$$
+
 \paragraph{Matrix exponential (Cayley-Hamilton Method)}
 $$e^{\M{A}t} = \sum_{k=0}^{n-1} \alpha_k \M{A}^k
 \quad \text {with } \alpha_0 \cdots \alpha_{n-1} \text{ determined by} \quad
 e^{\lambda_i t} = \sum_{k=0}^{n-1} \alpha_k \lambda_i^k$$
+
 \paragraph{Matrix exponential (Laplace method)}
 $$e^{\M{A}t} = \lagrange \left\{ (s\Mc{I}-\M{A})^{-1} \right\}$$
+
 \paragraph{Matrix exponential (Jordan form)}
 $$e^{\M{A}t} = \M{Q} e^{\bar{\M{A}}t} \M{Q}^{-1} \quad \text{where} \quad \bar{\M{A}} = \M{Q}^{-1}\M{AQ}$$
-\paragraph{Controllability matrix} $\mathcal{C} = \begin{bmatrix}\M{B} & \M{AB} & \M{A}^{2}\M{B} & \hdots & \M{A}^{n-1}\M{B}\end{bmatrix}$
-\paragraph{Observability matrix} $\mathcal{O} = \begin{bmatrix}\M{C} & \M{CA} & \M{CA}^2 & \hdots & \M{CA}^{n-1}\end{bmatrix}^{\text{T}}$
-\paragraph{Minimal realisation} Given a transfer function; a state-space model that is controllable and observable, and has the same input-output behaviour as the function, is minimal.
+
+\paragraph{Controllability matrix}
+$\mathcal{C} = \begin{bmatrix}\M{B} & \M{AB} & \M{A}^{2}\M{B} & \hdots & \M{A}^{n-1}\M{B}\end{bmatrix}$
+
+\paragraph{Observability matrix}
+$\mathcal{O} = \begin{bmatrix}\M{C} & \M{CA} & \M{CA}^2 & \hdots & \M{CA}^{n-1}\end{bmatrix}^{\text{T}}$
+
+\paragraph{Minimal realisation}
+Given a transfer function; a state-space model that is controllable and observable, and has the same input-output behaviour as the function, is minimal.
 
 
 
