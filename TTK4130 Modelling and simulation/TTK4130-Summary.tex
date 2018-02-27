@@ -102,7 +102,7 @@ The time derivative of the energy function is
 	\dot{V} = \pd{V}{t} + \pd{V}{\V{x}} \V{f}(\V{x}, \V{u}, t).
 \end{equation}
 
-\paragraph{Passivity} describes whether a system produces energy to it`s surroundings.
+\paragraph{Passivity} describes whether a system produces energy to its surroundings.
 (Example: Power in a resistor: \(P = u i = R i^2 \implies P \geq 0 \implies\) Passive!)
 \begin{itemize}
 	\item Connected stable systems are not always stable...
@@ -115,7 +115,7 @@ A system with input \(u\) and output \(y\) is passive if
 for all inputs.
 
 \subsection{Positive realness of a transfer function (56)}
-A system is passive if it's transfer function is positive real.
+A system is passive iff its transfer function is positive real.
 \paragraph{Definition:} The t.f. \(H(s)\) (rational or not) is positive real if:
 \begin{enumerate}
 	\item \(H(s)\) is analytic \( \enforall \Re[s] > 0 \)
@@ -123,7 +123,7 @@ A system is passive if it's transfer function is positive real.
 	\item \(\Re[H(s)] \geq 0 \enforall \Re [s] > 0\).
 \end{enumerate}
 But this is easier to use:
-\paragraph{Theorem:} A rational, proper t.f. \(H(s)\) is positive real if:\footnote{if and only if}
+\paragraph{Theorem:} A rational, proper t.f. \(H(s)\) is positive real iff:\footnote{if and only if}
 \begin{enumerate}
 	\item \( H(s) \) has no poles in the right half plane.
 	\item \( \Re[H(\jmath \omega)] \geq 0 \enforall \omega \) such that \( \jmath \omega \) is not a pole of \( H(s) \).
@@ -392,7 +392,7 @@ The vector
 \begin{equation}
 	\vec{v} = v_1 \vec{a_1} + v_2 \vec{a_2} + v_3 \vec{a_3}
 \end{equation}
-has `built in' information about it`s frame of reference (it is \emph{coordinate free}). However, the coordinate vector
+has `built in' information about its frame of reference (it is \emph{coordinate free}). However, the coordinate vector
 \begin{equation}
 	\V{u}^a =
 	\begin{pmatrix}
@@ -439,7 +439,7 @@ Alternatively:
 		(\V{u}^b)^\times	&= \R^b_a (\V{u}^a)^\times \R^a_b \\
 	\end{aligned}
 \end{equation}
-\paragraph{Definition:} A matrix \(\R\) is a rotation matrix if\(\R \in SO(3)\):
+\paragraph{Definition:} A matrix \(\R\) is a rotation matrix iff\(\R \in SO(3)\):
 \begin{equation}
 	SO(3) = \lbrace \R \enspace |
 	\enspace \R \in \mathbb{R}^{3 \times 3},
@@ -640,7 +640,7 @@ Then the kinematic differential equations for the deviation are
 	\includegraphics{rigid_body}
 \end{figure}
 
-The orientation \(\R^i_b\) of a rigid body and the position \(\vec{r}_o\) of a point \(o\) in the body, both in relation to a reference frame \(i\), define it`s configuration. The position of any point \(p\) in the body is given by
+The orientation \(\R^i_b\) of a rigid body and the position \(\vec{r}_o\) of a point \(o\) in the body, both in relation to a reference frame \(i\), define its configuration. The position of any point \(p\) in the body is given by
 \begin{equation}
 	\vec{r}_p = \vec{r}_o + \vec{r}.
 \end{equation}
