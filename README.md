@@ -1,5 +1,5 @@
-# ntnu-course-summaries
-This repository contains more or less brief summaries of courses I've taken at NTNU. Some fairly complete, some not.
+Summaries of some of the courses I took at NTNU between 2012 and 2017.
 
-## How to contribute
-If you want to add or change something, just submit a pull request. No strict guidelines.
+If you like this repo, hit the ⭐ button at the top.
+
+Feel free to suggest any changes by creating an issue or submitting a pull request.
